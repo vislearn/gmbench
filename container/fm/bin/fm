@@ -1,0 +1,7 @@
+#!/bin/bash
+set -eu -o pipefail
+
+METHOD=fm
+PARAMETERS=(--max-batches 0 --greedy-generations 99999)
+
+source /usr/local/lib/gmbench/fm.sh

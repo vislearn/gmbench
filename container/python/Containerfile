@@ -1,0 +1,12 @@
+# Author: Stefan Haller <stefan.haller@iwr.uni-heidelberg.de>
+
+FROM docker.io/debian:bullseye
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get update \
+&& apt-get dist-upgrade -y \
+&& apt-get install -y \
+	python3 \
+	python3-dev \
+&& find /var/cache/apt -mindepth 1 -delete \
+&& find /var/lib/apt/lists -mindepth 1 -delete

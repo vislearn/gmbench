@@ -1,0 +1,55 @@
+# Author: Stefan Haller <stefan.haller@iwr.uni-heidelberg.de>
+
+FROM docker.io/debian:bullseye
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get update \
+&& apt-get dist-upgrade -y \
+&& apt-get install -y \
+	build-essential \
+	curl \
+	meson \
+	ninja-build \
+	pkg-config \
+	python3 \
+	python3-dev \
+	python3-numpy \
+	python3-scipy \
+	swig \
+&& find /var/cache/apt -mindepth 1 -delete \
+&& find /var/lib/apt/lists -mindepth 1 -delete
+
+# There is a bug/problem with Debians mangling of Python system paths and meson
+# will install the files to the wrong directory. We symlink the directory so
+# that Debian's Python interpreter is able to find the installed modules.
+RUN cd /usr/local/lib/python3.* && ln -s dist-packages site-packages
+
+RUN useradd -ms /bin/bash builder
+
+USER builder
+WORKDIR /home/builder
+
+RUN curl -Lo libmpopt.tar.gz 'https://github.com/vislearn/libmpopt/archive/65eb28d4a277a2556c85914b9b900424df951ef3.tar.gz' \
+&& tar -xf libmpopt.tar.gz \
+&& rm libmpopt.tar.gz \
+&& mv libmpopt-* libmpopt
+
+RUN mkdir libmpopt-build \
+&& cd libmpopt-build \
+&& meson setup \
+	-Db_ndebug=if-release \
+	-Dbuildtype=release \
+	-Dqpbo=disabled \
+	-Dgurobi=disabled \
+	../libmpopt/ \
+&& ninja
+
+USER root
+
+RUN cd libmpopt-build && meson install && ldconfig
+
+COPY bin/ /usr/local/bin/
+
+RUN chmod 0755 /usr/local/bin/*
+
+USER builder

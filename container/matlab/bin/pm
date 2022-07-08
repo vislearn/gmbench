@@ -1,0 +1,10 @@
+#!/bin/bash
+set -eu -o pipefail
+
+METHOD=pm
+REQUIRES_BIJECTIVE=1
+REQUIRES_NONPOSITIVE=1
+REQUIRES_ZERO_UNARIES=1
+MATLAB_INCLUDES=('fgm')
+
+source /usr/local/lib/gmbench/matlab.sh

@@ -1,0 +1,45 @@
+# Author: Stefan Haller <stefan.haller@iwr.uni-heidelberg.de>
+
+FROM docker.io/debian:bullseye
+
+# We need vim-tiny for the "ex" command used by the "download-and-patch" script.
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get update \
+&& apt-get dist-upgrade -y \
+&& apt-get install -y \
+	build-essential \
+	cmake \
+	curl \
+	ninja-build \
+	unzip \
+	vim-tiny \
+&& find /var/cache/apt -mindepth 1 -delete \
+&& find /var/lib/apt/lists -mindepth 1 -delete
+
+RUN useradd -ms /bin/bash builder
+
+USER builder
+WORKDIR /home/builder
+
+RUN curl -LJ -o tkr-graphmatching.tar.gz 'https://github.com/vislearn/tkr-graphmatching/archive/ca38874dd8a22ad945610ff5bb234b2fe965648d.tar.gz' \
+&& tar -xf tkr-graphmatching.tar.gz \
+&& cd tkr-graphmatching-* \
+&& ./download-and-patch \
+&& cd GraphMatching-v1.02.src/ \
+&& sed -i -re '/target_link_libraries/s/_shared/_static/' CMakeLists.txt
+
+RUN mkdir build \
+&& cd build \
+&& cmake -GNinja -DCMAKE_BUILD_TYPE=Release ../tkr-graphmatching-*/GraphMatching-v1.02.src \
+&& ninja
+
+USER root
+
+RUN cd build && ninja install && ldconfig
+
+COPY bin/ /usr/local/bin/
+COPY lib/ /usr/local/lib/
+
+RUN chmod 0755 /usr/local/bin/*
+
+USER builder

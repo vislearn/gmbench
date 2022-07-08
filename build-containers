@@ -1,0 +1,19 @@
+#!/bin/bash
+#
+# Author: Stefan Haller <stefan@iwr.uni-heidelberg.de>
+#
+set -eu -o pipefail
+
+build() {
+	local name="$1"
+	shift 1
+
+	podman build -t "gm-benchmark/${name}" "$@" "container/${name}"
+}
+
+build dd-ls
+build fm
+build matlab --build-arg matlab_license_server="${MATLAB_LICENSE_SERVER:-}"
+build matrix-transform
+build mp
+build python

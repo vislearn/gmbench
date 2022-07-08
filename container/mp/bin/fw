@@ -1,0 +1,7 @@
+#!/bin/bash
+set -eu -o pipefail
+
+METHOD=fw
+COMMAND=(graph_matching_frank_wolfe_text_input)
+
+source /usr/local/lib/gmbench/mp.sh

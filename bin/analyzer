@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# Author: Stefan Haller <stefan.haller@iwr.uni-heidelberg.de>
+#
+set -eu -o pipefail
+
+# Prepend the module directory to the PYTHONPATH.
+export PYTHONPATH="${PWD}/python${PYTHONPATH:+:${PYTHONPATH}}"
+
+# The Python module will inspect this environment variable to override its own
+# program name. Otherwise usage information and other things are printed with
+# "python3" as program name.
+export OVERRIDE_ARGV0="$0"
+
+exec python3 -B -m gmbench.analyzer "$@"

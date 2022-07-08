@@ -1,0 +1,18 @@
+#!/bin/bash
+set -eu -o pipefail
+
+METHOD=mp-fw
+
+COMMAND=(
+	graph_matching_mp_tightening
+		--maxIter 99999
+		--tighten
+		--tightenInterval 50
+		--tightenIteration 200
+		--tightenConstraintsPercentage 0.01
+		--tightenReparametrization uniform:0.5
+		--graphMatchingRounding fw
+		-i
+)
+
+source /usr/local/lib/gmbench/mp.sh

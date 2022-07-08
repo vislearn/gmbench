@@ -1,0 +1,46 @@
+# Author: Stefan Haller <stefan.haller@iwr.uni-heidelberg.de>
+
+FROM docker.io/debian:bullseye
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get update \
+&& apt-get dist-upgrade -y \
+&& apt-get install -y \
+	build-essential \
+	cmake \
+	git \
+	libhdf5-dev \
+	ninja-build \
+	python3-dev \
+&& find /var/cache/apt -mindepth 1 -delete \
+&& find /var/lib/apt/lists -mindepth 1 -delete
+
+RUN useradd -ms /bin/bash builder
+
+USER builder
+WORKDIR /home/builder
+
+RUN git clone https://github.com/LPMP/LPMP.git \
+&& cd LPMP \
+&& git reset --hard 3bd1f2735be943d874d44e155ccc79e79f55c741 \
+&& git submodule init \
+&& (git submodule update -- external/DD_ILP; cd external/DD_ILP && git reset --hard c8d58abd82fad89265bb869735f77c8b0051f7d7 && cd - && git add external/DD_ILP) \
+&& git submodule update --init --recursive
+
+RUN sed -i -re 's/ max_iter = 1000;/ max_iter = 99999;/' LPMP/include/graph_matching/graph_matching_frank_wolfe.h
+
+RUN mkdir build \
+&& cd build \
+&& cmake -GNinja -DCMAKE_BUILD_TYPE=Release ../LPMP \
+&& ninja graph_matching_mp graph_matching_mp_tightening graph_matching_frank_wolfe_text_input
+
+USER root
+
+COPY bin/ /usr/local/bin/
+COPY lib/ /usr/local/lib/
+
+RUN mv build/src/graph_matching/graph_matching_* /usr/local/bin/ \
+&& chown root:root /usr/local/bin/* \
+&& chmod 0755 /usr/local/bin/*
+
+USER builder

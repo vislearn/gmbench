@@ -1,0 +1,7 @@
+#!/bin/bash
+set -eu -o pipefail
+
+METHOD=fm-bca
+PARAMETERS=(--max-batches 99999 --batch-size 10 --greedy-generations 10)
+
+source /usr/local/lib/gmbench/fm.sh

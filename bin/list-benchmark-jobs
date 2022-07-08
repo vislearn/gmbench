@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+#
+# Author: Stefan Haller <stefan.haller@iwr.uni-heidelberg.de>
+#
+
+import argparse
+import os.path
+import sys
+
+from collections import namedtuple
+
+
+Dataset = namedtuple('Dataset', 'name num_instances')
+
+DATASETS = (
+    Dataset(name='caltech-large', num_instances=9),
+    Dataset(name='caltech-small', num_instances=21),
+    Dataset(name='car',           num_instances=30),
+    Dataset(name='flow',          num_instances=6),
+    Dataset(name='hotel',         num_instances=105),
+    Dataset(name='house-dense',   num_instances=105),
+    Dataset(name='house-sparse',  num_instances=105),
+    Dataset(name='motor',         num_instances=20),
+    Dataset(name='opengm',        num_instances=4),
+    Dataset(name='pairs',         num_instances=16),
+    Dataset(name='worms',         num_instances=30),
+)
+
+
+def construct_argument_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('method')
+    parser.add_argument('trial', type=int)
+    return parser
+
+
+def generate_all_instances(dataset):
+    for i in range(dataset.num_instances):
+        yield (dataset.name, i + 1)
+
+
+def generate_all():
+    for dataset in DATASETS:
+        yield from generate_all_instances(dataset)
+
+
+def main():
+    args = construct_argument_parser().parse_args()
+
+    for dataset, instance in generate_all():
+        output_directory = f'benchmark/{args.trial}/{args.method}/{dataset}/{dataset}{instance}'
+
+        if not os.path.isdir(output_directory):
+            print(f'{args.method} {dataset} {instance} {args.trial}')
+
+
+if __name__ == '__main__':
+    main()

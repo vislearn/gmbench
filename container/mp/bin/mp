@@ -1,0 +1,13 @@
+#!/bin/bash
+set -eu -o pipefail
+
+METHOD=mp
+
+COMMAND=(
+	graph_matching_mp
+		--maxIter 99999
+		--roundingReparametrization uniform:0.5
+		-i
+)
+
+source /usr/local/lib/gmbench/mp.sh

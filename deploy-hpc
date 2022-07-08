@@ -1,0 +1,7 @@
+#!/bin/bash
+#
+# Author: Stefan Haller <stefan.haller@iwr.uni-heidelberg.de
+#
+set -eu -o pipefail
+
+rsync -rhvltEPc --delete bin images slurm "$@"

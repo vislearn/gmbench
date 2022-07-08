@@ -1,0 +1,10 @@
+#!/bin/bash
+set -eu -o pipefail
+
+METHOD=ga
+REQUIRES_BIJECTIVE=1
+REQUIRES_NONPOSITIVE=1
+REQUIRES_ZERO_UNARIES=0
+MATLAB_INCLUDES=('smac')
+
+source /usr/local/lib/gmbench/matlab.sh

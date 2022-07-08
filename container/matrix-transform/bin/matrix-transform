@@ -1,0 +1,559 @@
+#!/usr/bin/env python3
+#
+# Authors:
+#   Stefan Haller <stefan.haller@iwr.uni-heidelberg.de>
+#   Lisa Hutschenreiter <lisa.hutschenreiter@iwr.uni-heidelberg.de>
+#
+# Based on original draft by: Lorenz Feineis
+#
+
+import math
+import os
+import os.path
+import sys
+from argparse import ArgumentParser
+from copy import deepcopy
+
+import scipy.sparse
+import scipy.io
+
+from mpopt.qap.dd import parse_dd_model
+from mpopt.qap.model import Model, Edge
+from mpopt.utils import smart_open
+
+
+def dump_dd_model(model, f):
+    assert model.no_assignments == len(model.assignments)
+    assert model.no_edges == len(model.edges)
+
+    f.write(f'p {model.no_left} {model.no_right} {model.no_assignments} {model.no_edges}\n')
+
+    for idx, assignment in enumerate(model.assignments):
+        f.write(f'a {idx} {assignment.left} {assignment.right} {assignment.cost}\n')
+
+    for edge in model.edges:
+        f.write(f'e {edge.assignment1} {edge.assignment2} {edge.cost}\n')
+
+
+def construct_argument_parser():
+    parser = ArgumentParser()
+    parser.add_argument('input')
+    parser.add_argument('--verbose',      '-v', action='store_true')
+    parser.add_argument('--injective',    '-i', action='store_true')
+    parser.add_argument('--bijective',    '-b', action='store_true')
+    parser.add_argument('--shift',        '-s', action='store_true')
+    parser.add_argument('--zero-unaries', '-z', action='store_true')
+    parser.add_argument('--output-dd',    '-d')
+    parser.add_argument('--output-mat',   '-m')
+    return parser
+
+
+def min_max(a, b):
+    return min(a, b), max(a, b)
+
+
+def transform_injective(model):
+    """
+    Transforms non-injective into injective models.
+
+    Extends the model such that a right-node for "non-assignment" of each
+    left-node is included.
+    """
+
+    new_model = Model(no_left=model.no_left,
+                      no_right=model.no_right + model.no_left,
+                      no_assignments=model.no_assignments + model.no_left,
+                      no_edges=model.no_edges)
+
+    # keep previous assignments
+    for idx, assignment in enumerate(model.assignments):
+        new_model.add_assignment(idx, *assignment)
+
+    # keep previous edges
+    for edge in model.edges:
+        new_model.add_edge(*edge)
+
+    # add assignments for each node on the left to its corresponding personal dummy
+    for id_left in range(model.no_left):
+        new_model.add_assignment(id_assignment=model.no_assignments + id_left,
+                                 id_left=id_left,
+                                 id_right=model.no_right + id_left,
+                                 cost=0)
+
+    return new_model
+
+
+def transform_bijective(model):
+    """
+    Transforms non-bijective into bijective models.
+
+    Extents the model such that the node and label sets ($V$ and $E$) are both
+    extended to be $V \dotcup E$, where $\dotcup$ denotes the disjoint union.
+
+    In other words: For each node $v \in V$ we insert a label $\hat v \in \hat
+    V$. For each label $l \in L$ we insert a node $\hat l \in \hat L$. The new
+    node and label sets are now set to $V \cup \hat L$ and $L \cup \hat V$
+    respectively.
+    """
+
+    new_number = model.no_left + model.no_right
+    additional_assignments = model.no_left + model.no_right + model.no_left * model.no_right
+
+    new_model = Model(no_left=new_number,
+                      no_right=new_number,
+                      no_assignments=model.no_assignments + additional_assignments,
+                      no_edges=model.no_edges)
+
+    # keep previous assignments
+    for idx, assignment in enumerate(model.assignments):
+        new_model.add_assignment(idx, *assignment)
+
+    # keep previous edges:
+    for edge in model.edges:
+        new_model.add_edge(*edge)
+
+    counter = model.no_assignments
+
+    # add assignments for $V -> \hat V$
+    for id_left in range(model.no_left):
+        new_model.add_assignment(id_assignment=counter + id_left,
+                                 id_left=id_left,
+                                 id_right=model.no_right + id_left,
+                                 cost=0)
+    counter += model.no_left
+
+
+    # add assignments for $\hat L -> L$
+    for id_right in range(model.no_right):
+        new_model.add_assignment(id_assignment=counter + id_right,
+                                 id_left=model.no_left + id_right,
+                                 id_right=id_right,
+                                 cost=0)
+    counter += model.no_right
+
+    # add assignments for $\hat L -> \hat V$
+    for id_right in range(model.no_right):
+        for id_left in range(model.no_left):
+            new_model.add_assignment(id_assignment=counter,
+                                     id_left=model.no_left + id_right,
+                                     id_right=model.no_right + id_left,
+                                     cost=0)
+            counter += 1
+
+    assert new_model.no_left == new_model.no_right
+    assert new_model.no_assignments == len(new_model.assignments)
+    assert new_model.no_edges == len(new_model.edges)
+    return new_model
+
+
+def transform_shift(model):
+    """
+    Transforms the model such that all finite positive costs become
+    non-positive.
+
+    Returns a tuple of the new model with transformed costs and the global
+    shift constant.
+    """
+
+    # assignment_mapping[left, right] -> assignment_idx
+    assignment_mapping = {}
+    for idx, assignment in enumerate(model.assignments):
+        assert (assignment.left, assignment.right) not in assignment_mapping
+        assignment_mapping[assignment.left, assignment.right] = idx
+
+    def max_dict(d, k, v):
+        if v > d.get(k, 0):
+            d[k] = v
+
+    # max_nodes[left_node_idx] -> float
+    max_nodes = {}
+    for assignment in model.assignments:
+        max_dict(max_nodes, assignment.left, assignment.cost)
+
+    # max_edges[left1_idx, left2_idx] -> float, where left1_idx < left2_idx
+    max_edges = {}
+    for edge in model.edges:
+        assignment1 = model.assignments[edge.assignment1]
+        assignment2 = model.assignments[edge.assignment2]
+        max_dict(max_edges, min_max(assignment1.left, assignment2.left), edge.cost)
+
+    # new_edges[left1_idx, right1_idx, left2_idx, right2_idx] -> float
+    new_edges = {}
+    def add_to_edge(left1_idx, right1_idx, left2_idx, right2_idx, cost):
+        if left1_idx < left2_idx:
+            key = left1_idx, right1_idx, left2_idx, right2_idx
+        else:
+            key = left2_idx, right2_idx, left1_idx, right1_idx
+        new_edges[key] = new_edges.get(key, 0) + cost
+
+    for edge in model.edges:
+        assignment1 = model.assignments[edge.assignment1]
+        assignment2 = model.assignments[edge.assignment2]
+        add_to_edge(assignment1.left, assignment1.right, assignment2.left, assignment2.right, edge.cost)
+
+    for left1_idx in range(model.no_left):
+        for left2_idx in range(left1_idx + model.no_left):
+            if (left1_idx, left2_idx) in max_edges:
+                for assignment1_idx in model.left[left1_idx]:
+                    for assignment2_idx in model.left[left2_idx]:
+                        assignment1 = model.assignments[assignment1_idx]
+                        assignment2 = model.assignments[assignment2_idx]
+
+                        assert assignment1.left == left1_idx
+                        assert assignment2.left == left2_idx
+                        right1_idx = assignment1.right
+                        right2_idx = assignment2.right
+
+                        # Less than 1 constraint, no edge possible.
+                        assert left1_idx != left2_idx
+                        if right1_idx == right2_idx:
+                            continue
+
+                        add_to_edge(left1_idx, right1_idx, left2_idx, right2_idx, -max_edges[left1_idx, left2_idx])
+
+    # Number of edges can change, we recompute the number later.
+    new_model = Model(model.no_left, model.no_right, model.no_assignments, sys.maxsize)
+
+    for idx, assignment in enumerate(model.assignments):
+        cost = assignment.cost - max_nodes.get(assignment.left, 0)
+        assert cost <= 0
+        new_model.add_assignment(idx, assignment.left, assignment.right, cost)
+
+    for (left1_idx, right1_idx, left2_idx, right2_idx), cost in new_edges.items():
+        assert cost <= 0
+        if abs(cost) > 1e-8:
+            assignment1_idx = assignment_mapping[left1_idx, right1_idx]
+            assignment2_idx = assignment_mapping[left2_idx, right2_idx]
+            new_model.add_edge(*min_max(assignment1_idx, assignment2_idx), cost)
+
+    # Recompute number of edges.
+    new_model.no_edges = len(new_model.edges)
+    return new_model, sum(max_nodes.values()) + sum(max_edges.values())
+
+
+def transform_zero_unaries(model):
+    """
+
+    """
+
+    # assignment_mapping[left, right] -> assignment_idx
+    assignment_mapping = {}
+    for idx, assignment in enumerate(model.assignments):
+        assert (assignment.left, assignment.right) not in assignment_mapping
+        assignment_mapping[assignment.left, assignment.right] = idx
+
+    # label_set[left] -> set(right)
+    label_set = [set() for _ in range(model.no_left)]
+    for assignment in model.assignments:
+        label_set[assignment.left].add(assignment.right)
+
+    # edge_max_possible[left1_idx, right1_idx, left2_idx] -> int
+    print('edge_max_possible')
+    edge_max_possible = {}
+    for left1_idx in range(model.no_left):
+        print(left1_idx)
+        for left2_idx in range(model.no_left):
+            if left1_idx != left2_idx:
+                labels1 = label_set[left1_idx]
+                labels2 = label_set[left2_idx]
+                for right1_idx in labels1:
+                    possible = len(labels2) - (1 if right1_idx in labels2 else 0)
+                    edge_max_possible[left1_idx, right1_idx, left2_idx] = possible
+
+    def inc_dict(d, k):
+        d[k] = d.get(k, 0) + 1
+
+    # edge_count[left1_idx, right1_idx, left2_idx] -> int
+    print('edge_count')
+    edge_count = {}
+    for edge in model.edges:
+        assignment1 = model.assignments[edge.assignment1]
+        assignment2 = model.assignments[edge.assignment2]
+
+        assert assignment1.left != assignment2.left
+        assert assignment1.right != assignment2.right
+
+        key1 = (assignment1.left, assignment1.right, assignment2.left)
+        key2 = (assignment2.left, assignment2.right, assignment1.left)
+        inc_dict(edge_count, key1)
+        inc_dict(edge_count, key2)
+
+    # edge_new[left1_idx, right1_idx] -> [(left2_idx, int)]
+    print('edge_new')
+    edge_new = {}
+    for key in edge_max_possible.keys():
+        left1_idx, right1_idx, left2_idx = key
+        v = (left2_idx, edge_max_possible[key] - edge_count.get(key, 0))
+        edge_new.setdefault((left1_idx, right1_idx), []).append(v)
+
+    # We have now computed the number of edges we would have to insert
+    # when shifting unary cost information for (left1_idx, right1_idx) onto
+    # pairwise edges connected to left2_idx.
+    #
+    # We are interested in inserting the least number of edges. Hence for each
+    # (left_idx, right1_idx) pair, we pick the element left2_idx where the
+    # number of new edges is smallest.
+
+    print('possibilities')
+    for key, possibilities in edge_new.items():
+        left2_idx, count = min(possibilities, key=lambda v: v[1])
+        edge_new[key] = left2_idx
+
+    # new_edges[left1_idx, right1_idx, left2_idx, right2_idx] -> float
+    new_edges = {}
+    def add_to_edge(left1_idx, right1_idx, left2_idx, right2_idx, cost):
+        if left1_idx < left2_idx:
+            key = left1_idx, right1_idx, left2_idx, right2_idx
+        else:
+            key = left2_idx, right2_idx, left1_idx, right1_idx
+        new_edges[key] = new_edges.get(key, 0) + cost
+
+    for edge in model.edges:
+        assignment1 = model.assignments[edge.assignment1]
+        assignment2 = model.assignments[edge.assignment2]
+        add_to_edge(assignment1.left, assignment1.right, assignment2.left, assignment2.right, edge.cost)
+
+    for (left1_idx, right1_idx), left2_idx in edge_new.items():
+        for assignment2_idx in model.left[left2_idx]:
+            assignment1_idx = assignment_mapping[left1_idx, right1_idx]
+
+            assignment1 = model.assignments[assignment1_idx]
+            assignment2 = model.assignments[assignment2_idx]
+
+            assert assignment1.left == left1_idx
+            assert assignment1.right == right1_idx
+            assert assignment2.left == left2_idx
+            right2_idx = assignment2.right
+
+            # Less than 1 constraint, no edge possible.
+            assert left1_idx != left2_idx
+            if right1_idx == right2_idx:
+                continue
+
+            add_to_edge(left1_idx, right1_idx, left2_idx, right2_idx, assignment1.cost)
+
+    # Number of edges can change, we recompute the number later.
+    new_model = Model(model.no_left, model.no_right, model.no_assignments, sys.maxsize)
+
+    for idx, assignment in enumerate(model.assignments):
+        new_model.add_assignment(idx, assignment.left, assignment.right, 0)
+
+    for (left1_idx, right1_idx, left2_idx, right2_idx), cost in new_edges.items():
+        if abs(cost) > 1e-8:
+            assignment1_idx = assignment_mapping[left1_idx, right1_idx]
+            assignment2_idx = assignment_mapping[left2_idx, right2_idx]
+            new_model.add_edge(*min_max(assignment1_idx, assignment2_idx), cost)
+
+    # Recompute number of edges.
+    new_model.no_edges = len(new_model.edges)
+    return new_model
+
+
+def reduceK(K, Ct):
+    Ct=Ct.toarray()
+    indices = [i for i, n in enumerate(Ct.flatten(order='F')) if n==1]
+    K1 = K.tocsr()[indices, :]
+    K2 = K1.tocsr()[: , indices]
+    return scipy.sparse.coo_matrix(K2)
+
+
+def factorisation(model):
+    n1, n2 = model.no_left, model.no_right
+    left_edges = {}  ### (left1_idx, left2_idx) -> edge_id
+    right_edges = {} ### (right1_idx.right2_idx) -> edge_id
+
+    for idx, edge in enumerate(model.edges):
+        left1_idx = model.assignments[edge.assignment1].left
+        left2_idx = model.assignments[edge.assignment2].left
+
+        if (left1_idx, left2_idx) not in left_edges:
+            left_edges[(left1_idx, left2_idx)] = len(left_edges)
+        if (left2_idx, left1_idx) not in left_edges:
+            left_edges[(left2_idx, left1_idx)] = len(left_edges)
+
+        right1_idx = model.assignments[edge.assignment1].right
+        right2_idx = model.assignments[edge.assignment2].right
+
+        if (right1_idx, right2_idx) not in right_edges:
+            right_edges[(right1_idx, right2_idx)] = len(right_edges)
+        if (right2_idx, right1_idx) not in right_edges:
+            right_edges[(right2_idx, right1_idx)] = len(right_edges)
+
+    m1, m2 = len(left_edges), len(right_edges)
+
+    G1 = scipy.sparse.dok_matrix((n1, m1))
+    H1 = scipy.sparse.dok_matrix((n1, m1))
+
+    for (left1_idx, left2_idx), edge_id in left_edges.items():
+        G1[left1_idx, edge_id] = 1
+        H1[left2_idx, edge_id] = 1
+
+    G2 = scipy.sparse.dok_matrix((n2, m2))
+    H2 = scipy.sparse.dok_matrix((n2, m2))
+
+    for (right1_idx, right2_idx), edge_id in right_edges.items():
+        G2[right1_idx, edge_id] = 1
+        H2[right2_idx, edge_id] = 1
+
+    KQ = scipy.sparse.dok_matrix((m1, m2))
+
+    for edge in model.edges:
+        left1_idx = model.assignments[edge.assignment1].left
+        left2_idx = model.assignments[edge.assignment2].left
+
+        right1_idx = model.assignments[edge.assignment1].right
+        right2_idx = model.assignments[edge.assignment2].right
+
+        left = left_edges[left1_idx, left2_idx]
+        right = right_edges[right1_idx, right2_idx]
+
+        KQ[left, right] = edge.cost/2
+
+        left = left_edges[left2_idx, left1_idx]
+        right = right_edges[right2_idx, right1_idx]
+
+        KQ[left, right] = edge.cost/2
+
+    gph1 = {'G': G1.tocoo(), 'H': H1.tocoo()}
+    gph2 = {'G': G2.tocoo(), 'H': H2.tocoo()}
+    return KQ.tocoo(), gph1, gph2
+
+
+def cost_matrix(model):
+    n1, n2 = model.no_left, model.no_right
+    num_assignments = len(model.assignments)
+    nn = n1*n2
+    KP = scipy.sparse.dok_matrix((n1, n2), dtype='float')
+    Ct = scipy.sparse.dok_matrix((n1, n2))
+    K = scipy.sparse.dok_matrix((nn, nn), dtype='float')
+    #assignmentK = scipy.sparse.dok_matrix((num_assignments, num_assignments))
+
+    for assignment in model.assignments:
+        left_id = assignment.left
+        right_id = assignment.right
+        cost = assignment.cost
+        KP[left_id, right_id] = cost
+        Ct[left_id, right_id] = 1
+
+        row =  right_id * model.no_left + left_id
+        col = row
+
+        K[row, col] = cost
+        K[col, row] = cost
+
+    for edge in model.edges:
+        ass1 = model.assignments[edge.assignment1]
+        ass2 = model.assignments[edge.assignment2]
+
+        left1_idx  = model.assignments[edge.assignment1].left
+        left2_idx = model.assignments[edge.assignment2].left
+
+        right1_idx = model.assignments[edge.assignment1].right
+        right2_idx = model.assignments[edge.assignment2].right
+
+        row = right1_idx * model.no_left + left1_idx
+        col = right2_idx * model.no_left + left2_idx
+
+        K[row, col] = edge.cost/2
+        K[col, row] = edge.cost/2
+
+    return K.tocoo(), KP.tocoo(), Ct.tocoo()
+
+
+def ConstructMatSparse(model):
+    C, KP, Ct = cost_matrix(model)
+    KQ, gph1, gph2 = factorisation(model)
+
+    return KP, KQ, Ct, gph1, gph2, C
+
+
+def main():
+    args = construct_argument_parser().parse_args()
+    assert not (args.injective and args.bijective)
+
+    with smart_open(args.input, 'rt') as f:
+        model = parse_dd_model(f)
+
+    if args.verbose:
+        orig_model = model
+
+    if args.injective:
+        print('injective')
+        model = transform_injective(model)
+
+    if args.bijective:
+        print('bijective')
+        model = transform_bijective(model)
+
+    if args.zero_unaries:
+        print('zero')
+        model = transform_zero_unaries(model)
+
+    if args.shift:
+        print('shift')
+        model, offset = transform_shift(model)
+    else:
+        offset = 0
+
+    if args.verbose:
+        old = orig_model.no_left
+        new = model.no_left
+        increase = (new - old) / old * 100.0 if old else math.nan
+        print(f'no_left: {old} -> {new} ({increase:+.2f}%)')
+
+        old = orig_model.no_right
+        new = model.no_right
+        increase = (new - old) / old * 100.0 if old else math.nan
+        print(f'no_left: {old} -> {new} ({increase:+.2f}%)')
+
+
+        old = orig_model.no_assignments
+        new = model.no_assignments
+        increase = (new - old) / old * 100.0 if old else math.nan
+        print(f'assignments: {old} -> {new} ({increase:+.2f}%)')
+
+        old = orig_model.no_edges
+        new = model.no_edges
+        increase = (new - old) / old * 100.0 if old else math.nan
+        print(f'edges: {old} -> {new} ({increase:+.2f}%)')
+
+        print(f'global cost offset: {offset:+.2f}')
+
+    if args.output_dd:
+        # First write into temporary file.
+        root, ext = os.path.splitext(args.output_dd)
+        tmpfile = f'{root}.tmp{ext}'
+
+        with smart_open(tmpfile, 'wt') as f:
+            dump_dd_model(model, f)
+
+        # When written completely, move it into final place.
+        os.rename(tmpfile, args.output_dd)
+
+    if args.output_mat:
+        print('ConstructMatSparse')
+        KP, KQ, Ct, gph1, gph2, K = ConstructMatSparse(model)
+        print('reduceK')
+        K_reduced = reduceK(K, Ct)
+
+        data = { 'offset': offset,
+                 'reducedK': K_reduced,
+                 'KP': KP,
+                 'KQ': KQ,
+                 'K': K,
+                 'Ct': Ct,
+                 'gph1': gph1,
+                 'gph2': gph2 }
+
+        print('tmpfile')
+        # First write into temporary file.
+        tmpfile = f'{args.output_mat}.tmp'
+        scipy.io.savemat(tmpfile, data, do_compression=True)
+
+        print('rename')
+        # When written completely, move it into final place.
+        os.rename(tmpfile, args.output_mat)
+
+
+if __name__ == '__main__':
+    main()

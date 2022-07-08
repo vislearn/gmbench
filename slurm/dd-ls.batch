@@ -1,0 +1,43 @@
+#!/bin/bash
+#
+# Author: Stefan Haller <stefan@iwr.uni-heidelberg.de>
+#
+#SBATCH --time=01:00:00
+#SBATCH --partition=romeo
+#SBATCH --cpu-freq=low-high:ondemand
+#SBATCH --exclusive
+#SBATCH --ntasks=32
+#SBATCH --cpus-per-task=8
+#SBATCH --mem-per-cpu=1000M
+
+# Abort on errors and uninitialized variables.
+set -eu -o pipefail
+
+# Exit early if some parameters are missing.
+if [[ $# -lt 1 ]]; then
+	echo "$0 TRIAL" >&1
+	exit 64
+fi
+
+# Allows to run multiple trials per method/dataset combination.
+trial="$1"
+shift
+
+echo dd-ls.batch "${trial}"
+srun --label --ntasks="${SLURM_JOB_NUM_NODES}" hostname
+
+# We copy the singularity image to local storage to reduce impact of network
+# file system.
+srun --label --ntasks="${SLURM_JOB_NUM_NODES}" rsync -ah images/dd-ls.squashfs /tmp
+
+# This will enumerate all commands that have to be executed for one trial. The
+# commands will be randomly shuffled so that the order is not the same for
+# every trail (reduction of systematic errors). We run spawn SLURM_NTASKS in
+# parallel. Executable environment is located in singularity container.
+(
+	bin/list-benchmark-jobs dd-ls0 "${trial}"
+	bin/list-benchmark-jobs dd-ls3 "${trial}"
+	bin/list-benchmark-jobs dd-ls4 "${trial}"
+) | shuf | xargs -r -d'\n' -n1 -P"${SLURM_NTASKS}" \
+	srun -n1 -N1 -c8 --exclusive \
+		slurm/singularity-wrapper /tmp/dd-ls.squashfs /bin/bash -c

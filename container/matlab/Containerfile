@@ -1,0 +1,87 @@
+# Author: Stefan Haller <stefan.haller@iwr.uni-heidelberg.de>
+
+FROM docker.io/mathworks/matlab:r2020b
+
+USER root
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+&& apt-get update \
+&& apt-get dist-upgrade -y \
+&& apt-get install -y build-essential curl git \
+&& find /var/cache/apt -mindepth 1 -delete \
+&& find /var/lib/apt/lists -mindepth 1 -delete
+
+USER matlab
+WORKDIR /home/matlab
+
+ARG matlab_license_server
+
+RUN sudo mkdir /usr/local/lib/matlab
+
+# SMAC and GA
+RUN export "MLM_LICENSE_FILE=${matlab_license_server}" \
+&& set -x \
+&& curl -Lo smac.zip 'http://www.timotheecour.com/software/graph_matching/graph_matching_SMAC_02_06_2011.zip' \
+&& unzip -q smac.zip \
+&& rm smac.zip \
+&& mv -T graph_matching_SMAC smac \
+&& cd smac \
+&& matlab -batch 'init; compileDir' \
+&& cd \
+&& sudo chown -R root:root smac \
+&& sudo mv -T smac /usr/local/lib/matlab/smac
+
+# SM, IPFPU and IPFPS
+RUN curl -Lo ipfp.zip 'https://sites.google.com/site/graphmatchingmethods/Code_including_IPFP.zip?attredirects=0' \
+&& unzip -q ipfp.zip \
+&& rm ipfp.zip \
+&& mv -T PairwiseMatching ipfp \
+&& sudo chown -R root:root ipfp \
+&& sudo mv -T ipfp /usr/local/lib/matlab/ipfp
+
+# MPM and RRWM
+RUN export "MLM_LICENSE_FILE=${matlab_license_server}" \
+&& set -x \
+&& curl -Lo mpm.zip 'http://www.di.ens.fr/willow/research/maxpoolingmatching/MPM_release_v1.zip' \
+&& unzip -q mpm.zip -d mpm \
+&& rm mpm.zip \
+&& cd mpm \
+&& matlab -batch compile \
+&& cd \
+&& sudo chown -R root:root mpm \
+&& sudo mv -T mpm /usr/local/lib/matlab/mpm
+
+# HBP
+RUN git clone https://github.com/zzhang1987/HungarianBP.git \
+&& mv -T HungarianBP hbp \
+&& cd hbp \
+&& git reset --hard 3be6af6c128dfe1b08b07f3bbb00e1dc43733bcb \
+&& git submodule update --init \
+&& cd \
+&& find hbp -name '.*' -exec rm -rf '{}' + \
+&& sudo chown -R root:root hbp \
+&& sudo mv -T hbp /usr/local/lib/matlab/hbp
+
+# LSM, FGMD and PM
+RUN export "MLM_LICENSE_FILE=${matlab_license_server}" \
+&& set -x \
+&& git clone https://github.com/zhfe99/fgm.git \
+&& cd fgm \
+&& git reset --hard 06ebf17787b3e0b05ec612a3ba859eda80232032 \
+&& matlab -batch make \
+&& cd \
+&& sudo chown -R root:root fgm \
+&& sudo mv -T fgm /usr/local/lib/matlab/fgm
+
+USER root
+
+COPY bin/ /usr/local/bin/
+COPY lib/ /usr/local/lib/
+COPY matlab/wrapper/ /usr/local/lib/matlab/wrapper/
+
+RUN chmod 0755 /usr/local/bin/*
+
+USER matlab
+
+ENTRYPOINT []
+CMD ["/bin/bash", "-l"]

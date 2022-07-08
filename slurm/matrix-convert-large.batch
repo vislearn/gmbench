@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# Author: Stefan Haller <stefan@iwr.uni-heidelberg.de>
+#
+#SBATCH --time=02:00:00
+#SBATCH --partition=romeo
+#SBATCH --ntasks=15
+#SBATCH --cpus-per-task=1
+#SBATCH --mem-per-cpu=20G
+
+# Abort on errors and uninitialized variables.
+set -eu -o pipefail
+
+# Clone directory structure of `./datasets` -> `./matlab_datasets`.
+find datasets/ -type d | sed -rne 's|^datasets/|datasets_matlab/|p' | xargs -r -d'\n' -n1 mkdir -p
+
+# This sbatch has $SLURM_NTASKS sub-tasks. This sbatch scripts is only of them.
+# With srun we spawn more worker tasks. Each srun sub-task schedules one task
+# and needs 1 core. By passing exclusive we prevent over-committing, so srun
+# will wait until previous tasks have finished if no more task allocations are
+# free.
+bin/list-matrix-transformation-jobs | egrep '/caltech-large/|/flow/|/pairs/|/worms/' | \
+	xargs -r -d'\n' -n1 -P"${SLURM_NTASKS}" \
+		srun -n1 -N1 -c1 --exclusive \
+			slurm/singularity-wrapper images/matrix-transform.squashfs /bin/bash -c

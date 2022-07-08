@@ -1,0 +1,7 @@
+#!/bin/bash
+set -eu -o pipefail
+
+METHOD=dd-ls0
+PARAMETERS=(--linear --tree)
+
+source /usr/local/lib/gmbench/dd-ls.sh

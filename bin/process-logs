@@ -1,0 +1,465 @@
+#!/usr/bin/env python3
+
+import argparse
+import gzip
+import json
+import os.path
+import re
+import sys
+from collections import namedtuple
+
+
+Datapoint = namedtuple('Datapoint', 'time value bound assignment')
+
+
+def open_maybe_gzipped(path, *args, **kwargs):
+    gzipped_path = path + '.gz'
+    if os.path.exists(gzipped_path):
+        return gzip.open(gzipped_path, *args, **kwargs)
+    else:
+        return open(path, *args, **kwargs)
+
+
+def parse_dd_ls(directory):
+    re_line = re.compile(
+        r'^(?P<iteration>[0-9]+)\t'
+        r'(?P<time>[^\t]+)\t'
+        r'(?P<theta>[^\t]+)\t'
+        r'(?P<upper_bound>[^\t]+)\t'
+    )
+
+    # The output is split over two files. In output.txt there is a JSON object
+    # per line that is written in the GraphMatching part of the solver (writes
+    # upper bound and labeling/assignment). The stdout.txt contains the
+    # original (unmodified) output and only contains time, lower bound, upper
+    # bound (labeling is not available). Each status line in stdout.txt should
+    # belong to one line in output.txt. We check that the data is consistent.
+    #
+    # Times in output.txt are computed when labeling is computed. This happens
+    # before the projection step in the main loop. This is why we pick the
+    # timing information from the stdout file.
+
+    with open_maybe_gzipped(f'{directory}/stdout.txt', 'rt') as stdout:
+        with open_maybe_gzipped(f'{directory}/output.txt', 'rt') as output:
+            output_iter = iter(output)
+            iteration = 0
+            for stdout_line in stdout:
+                if m := re_line.search(stdout_line):
+                    assert iteration == int(m.group('iteration'))
+                    time = float(m.group('time'))
+                    theta = float(m.group('theta'))
+                    upper_bound = float(m.group('upper_bound'))
+
+                    output_line = next(output_iter)
+                    output_data = json.loads(output_line)
+                    assert abs(upper_bound - output_data['energy']) < 1e-2
+
+                    yield Datapoint(time=time,
+                                    value=output_data['energy'],
+                                    bound=theta,
+                                    assignment=output_data['labeling'])
+
+                    iteration += 1
+
+
+def parse_fm(directory):
+    # Output is simple: All information is present on each status line. For each
+    # line we emit one data point.
+
+    re_line = re.compile(
+        r'(?:greedy|it)=(?P<it>[0-9]+) '
+        r'lb=(?P<lb>[^ ]+) '
+        r'ub=(?P<ub>[^ ]+) '
+        r'gap=[^ ]+ '
+        r't=(?P<t>[^ ]+) '
+        r'a=\[(?P<a>[^\]]*)\]'
+    )
+
+    with open_maybe_gzipped(f'{directory}/stdout.txt', 'rt') as f:
+        for line in f:
+            if m := re_line.search(line):
+                it = int(m.group('it'))
+                lb = float(m.group('lb'))
+                ub = float(m.group('ub'))
+                t  = float(m.group('t'))
+                a  = [int(x) for x in m.group('a').split(' ')]
+
+                for i, v in enumerate(a):
+                    if v == 4294967295:
+                        a[i] = -1
+
+                yield Datapoint(time=t, value=ub, bound=lb, assignment=tuple(a))
+
+
+def parse_matlab(directory):
+    re_model = re.compile('^Model: n1: (?P<n1>[0-9]+) n2: (?P<n2>[0-9]+)')
+    re_status = re.compile(
+        r'^time: (?P<time>[^ ]+) '
+        r'upper_bound: (?P<upper_bound>[^ ]+) '
+        r'(?:lower_bound: (?P<lower_bound>[^ ]+) )?'
+        r'labeling: \[(?P<labeling>[^\]]+)\]')
+
+    def matlab_to_assignment(labeling, no_left, no_right):
+        conv = lambda label: label - 1 if label <= no_right else -1
+        return [conv(label) for label in labeling[:no_left]]
+
+    with open_maybe_gzipped(f'{directory}/stdout.txt', 'rt') as f:
+        for line in f:
+            if m := re_model.search(line):
+                no_left = int(m.group('n1'))
+                no_right = int(m.group('n2'))
+
+            if m := re_status.search(line):
+                time = float(m.group('time'))
+                upper_bound = float(m.group('upper_bound'))
+                if lower_bound := m.group('lower_bound'):
+                    lower_bound = float(lower_bound)
+                else:
+                    lower_bound = float('-inf')
+                labeling = [int(x) for x in m.group('labeling').split(',')]
+                yield Datapoint(time=time,
+                                value=upper_bound,
+                                bound=lower_bound,
+                                assignment=matlab_to_assignment(labeling, no_left, no_right))
+
+def parse_fw(directory):
+    re_fw = re.compile(
+        '^iteration [0-9]+, '
+        'elapsed time = (?P<time>[^ ]+) seconds, '
+        'energy of rounded solution = (?P<rounded>[^, ]+), '
+        'objective = (?P<objective>[^ ]+)')
+
+    re_fw_match = re.compile(r'^(?P<left>[0-9]+) (?:-> (?P<right>[0-9]+)|not matched)')
+
+    re_fw_final = re.compile('^Final rounded solution cost = (?P<rounded>.+)')
+    re_fw_final2 = re.compile('^Optimization took (?P<time>[^ ]+) milliseconds')
+
+    time = 0
+    value = float('inf')
+    bound = float('-inf')
+    assignment = []
+
+    # Temporary buffer for appending data points. They will be yielded to the
+    # caller every once in a while.
+    #
+    # Each `try_*` function will try to match a specific line. They will append
+    # data points to the buffer. The `try_*` function return a boolean that
+    # indicates if the input line is fully handled.
+    datapoints = []
+
+    def emit_datapoint():
+        # We clone the assignment so that future modifications do not influence
+        # old data points.
+        datapoints.append(Datapoint(time=time,
+                                    value=value,
+                                    bound=bound,
+                                    assignment=tuple(assignment)))
+
+    with open_maybe_gzipped(f'{directory}/stdout.txt', 'rt') as f:
+        for line in f:
+            if m := re_fw.search(line):
+                if assignment:
+                    emit_datapoint()
+                time = float(m.group('time'))
+                value = float(m.group('rounded'))
+            elif m := re_fw_match.search(line):
+                left = int(m.group('left'))
+                right = m.group('right')
+                right = int(right) if right else -1
+                while len(assignment) <= left:
+                    assignment.append(None)
+                assignment[left] = right
+            elif m := re_fw_final.search(line):
+                if assignment:
+                    emit_datapoint()
+                value = float(m.group('rounded'))
+            elif m := re_fw_final2.search(line):
+                time = float(m.group('time')) / 1000
+                emit_datapoint()
+            elif next(f, None) is not None:
+                # Last line could be truncated due to buffering. We checked
+                # that it was really the last line. If not, we raise an error
+                # here.
+                raise RuntimeError('Parse error for fw')
+
+            yield from datapoints
+            datapoints.clear()
+
+
+def parse_mp(directory):
+    # The mp binaries will output status lines starting with `iteration =`.
+    # They will always contain the lower bound, but only every other line will
+    # also contain the upper bound (our primal value). Additionally the
+    # assignment is sprinkled into the output (labels separated by space
+    # character) just _before_ the status line containing the new upper bound.
+    #
+    # What we do: We try to parse the status line, otherwise we try to read the
+    # assignment. A possible assignment is simply remembered and will be output
+    # only when the next status line is processed.
+    #
+    # Then there is also the fw primal heuristic. Its status line quite
+    # similar, but starts with `iteration [NUMBER]`, note the missing `=` sign.
+    # However, the assignment is written directly _after_ the last status line
+    # (one label matching per line). Also not that the elapsed time of the fw
+    # heuristic is not absolute, but relative to when it was started during mp.
+    #
+    # The function is written in a way so that it works for all 4 mp/fw on/off
+    # possibilities. (Output of mp-mcf is pretty much the same as mp).
+
+    re_mp = re.compile(
+        '^iteration = (?P<iteration>[0-9]+), '
+        'lower bound = (?P<lower_bound>[^,]+), '
+        '(?:upper bound = (?P<upper_bound>[^,]+), )?'
+        'time elapsed = (?P<time>.+)s')
+
+    re_mp_assignment = re.compile('^[0-9]+ |^x ')
+
+    re_mp_label = re.compile('[0-9]+|x')
+
+    re_fw = re.compile(
+        '^iteration [0-9]+, '
+        'elapsed time = (?P<time>[^ ]+) seconds, '
+        'energy of rounded solution = (?P<rounded>[^, ]+), '
+        'objective = (?P<objective>[^ ]+)')
+
+    re_fw_match = re.compile(r'^(?P<left>[0-9]+) (?:-> (?P<right>[0-9]+)|not matched)')
+
+    def convert_mp_label(s):
+        if s == 'x':
+            return -1
+        return int(s)
+
+    mp_time = 0
+    time = 0
+    value = float('inf')
+    bound = float('-inf')
+    assignment = []
+
+    # Temporary buffer for appending data points. They will be yielded to the
+    # caller every once in a while.
+    #
+    # Each `try_*` function will try to match a specific line. They will append
+    # data points to the buffer. The `try_*` function return a boolean that
+    # indicates if the input line is fully handled.
+    datapoints = []
+
+    def emit_datapoint():
+        # We clone the assignment so that future modifications do not influence
+        # old data points.
+        datapoints.append(Datapoint(time=time,
+                                    value=value,
+                                    bound=bound,
+                                    assignment=tuple(assignment)))
+
+    def try_mp_status(line):
+        nonlocal bound, time, mp_time, value
+        if m := re_mp.search(line):
+            bound = float(m.group('lower_bound'))
+            time = float(m.group('time'))
+            mp_time = time
+            if m.group('upper_bound'):
+                value = float(m.group('upper_bound'))
+        return bool(m)
+
+    def try_mp_assignment(line):
+        nonlocal assignment
+        looks_like_assignment = False
+        if m := re_mp_assignment.search(line):
+            # Unfortunately, the regex match is not very specific. So we need
+            # to verify if the matched line really is a sensible assignment.
+            elements = line.strip().split(' ')
+            looks_like_assignment = all(re_mp_label.match(x) for x in elements)
+            if looks_like_assignment:
+                assignment = [convert_mp_label(x) for x in elements]
+        return looks_like_assignment
+
+    def try_fw_status(line):
+        return False
+        nonlocal time, value
+        if m := re_fw.search(line):
+            time = mp_time + float(m.group('time'))
+            value = float(m.group('rounded'))
+        return bool(m)
+
+    def try_fw_match(line):
+        return False
+        nonlocal assignment
+        if m := re_fw_match.search(line):
+            left = int(m.group('left'))
+            right = m.group('right')
+            right = int(right) if right else -1
+            while len(assignment) <= left:
+                assignment.append(None)
+            assignment[left] = right
+        return bool(m)
+
+    with open_maybe_gzipped(f'{directory}/stdout.txt', 'rt') as f:
+        expect_fw_match = False
+        for line in f:
+            if expect_fw_match:
+                if not try_fw_match(line):
+                    expect_fw_match = False
+                    emit_datapoint()
+
+            if try_mp_status(line):
+                emit_datapoint()
+            elif try_fw_status(line):
+                expect_fw_match = True
+            elif try_mp_assignment(line):
+                pass
+
+            yield from datapoints
+            datapoints.clear()
+
+
+PARSERS = {
+    # dd-ls* methods
+    'dd-ls0':       parse_dd_ls,
+    'dd-ls3':       parse_dd_ls,
+    'dd-ls4':       parse_dd_ls,
+
+    # matlab methods
+    'fgmd':         parse_matlab,
+    'ga':           parse_matlab,
+    'hbp':          parse_matlab,
+    'ipfps':        parse_matlab,
+    'ipfpu':        parse_matlab,
+    'lsm':          parse_matlab,
+    'mpm':          parse_matlab,
+    'pm':           parse_matlab,
+    'rrwm':         parse_matlab,
+    'sm':           parse_matlab,
+    'smac':         parse_matlab,
+
+    # fm methods
+    'fm':           parse_fm,
+    'fm-bca':       parse_fm,
+
+    # mp methods
+    'fw':           parse_fw,
+    'mp':           parse_mp,
+    'mp-fw':        parse_mp,
+    'mp-mcf':       parse_mp,
+}
+
+
+def construct_argument_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--compress', '-c', choices=('identical', 'nonmonotonous'))
+    parser.add_argument('directory')
+    return parser
+
+
+def basic_check(datapoints):
+    if datapoints:
+        assignment_len = max(len(dp.assignment) for dp in datapoints)
+        if not all(not dp.assignment or len(dp.assignment) == assignment_len
+                   for dp in datapoints):
+            return False
+
+        for prev, next in zip(datapoints, datapoints):
+            if prev.time > next.time:
+                return False
+
+        if any(x is None for dp in datapoints for x in dp.assignment):
+            return False
+
+    return True
+
+
+def compress_identical_ranges(datapoints):
+    prev = None
+    for dp in datapoints:
+        if not prev:
+            prev = dp
+            yield dp
+        else:
+            value_differs = abs(prev.value - dp.value) > 1e-6
+            bound_differs = abs(prev.bound - dp.bound) > 1e-6
+            assignment_differs = prev.assignment != dp.assignment
+            if value_differs or bound_differs or assignment_differs:
+                prev = dp
+                yield dp
+
+
+def compress_nonmonotonous_ranges(datapoints):
+    prev = None
+    for dp in datapoints:
+        if not prev:
+            prev = dp
+            yield dp
+        else:
+            dp = dp._replace(value=min(dp.value, prev.value),
+                             bound=max(dp.bound, prev.bound),
+                             assignment=dp.assignment if dp.value < prev.value else prev.assignment)
+            value_differs = abs(prev.value - dp.value) > 1e-6
+            bound_differs = abs(prev.bound - dp.bound) > 1e-6
+            assignment_differs = prev.assignment != dp.assignment
+            if value_differs or bound_differs or assignment_differs:
+                prev = dp
+                yield dp
+
+
+def main():
+    args = construct_argument_parser().parse_args()
+
+    regex = r'benchmark[^/]*/(?P<trial>[0-9]+)/(?P<method>[^/]+)/(?P<dataset>[^/]+)/(?P=dataset)(?P<instance>[0-9]+)/?$'
+    m = re.search(regex, args.directory)
+    if not m:
+        print('Error: Directory name does not match regular expression.', file=sys.stderr)
+        sys.exit(1)
+
+    trial = int(m.group('trial'))
+    method = m.group('method')
+    dataset = m.group('dataset')
+    instance = int(m.group('instance'))
+
+    if os.path.exists(f'{args.directory}/data.json.gz'):
+        print(f'Info: Output file already exists, skipping {args.directory}', file=sys.stderr)
+        sys.exit(0)
+
+    if method not in PARSERS:
+        print('Error: No parser available for method', method, file=sys.stderr)
+        sys.exit(1)
+
+    parser = PARSERS[method]
+
+    try:
+        datapoints = list(parser(args.directory))
+    except:
+        print('Error: Parsing logs failed for', args.directory, file=sys.stderr)
+        raise
+
+    if not basic_check(datapoints):
+        print('Error: Data points look incorrect for', args.directory, file=sys.stderr)
+        sys.exit(1)
+
+    old_datapoints = datapoints
+    if args.compress == 'identical':
+        datapoints = list(compress_identical_ranges(old_datapoints))
+    elif args.compress == 'nonmonotonous':
+        datapoints = list(compress_nonmonotonous_ranges(old_datapoints))
+
+    if len(datapoints) != len(old_datapoints):
+        print(f'Info: Compression resulted in {len(old_datapoints)} '
+              f'-> {len(datapoints)} datapoints for',
+              args.directory, file=sys.stderr)
+
+    if not datapoints:
+        print('Warning: No datapoints found for', args.directory, file=sys.stderr)
+
+    data = { 'method':       method,
+             'trial':        trial,
+             'dataset':      dataset,
+             'instance':     instance,
+             'datapoints':   [x._asdict() for x in datapoints] }
+
+    with gzip.open(f'{args.directory}/data.json.tmp.gz', 'wt') as f:
+        json.dump(data, f, indent=4)
+        f.write('\n')
+
+    os.rename(f'{args.directory}/data.json.tmp.gz', f'{args.directory}/data.json.gz')
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,6 @@
+#!/bin/sh
+#
+# Author: Stefan Haller <stefan@iwr.uni-heidelberg.de>
+#
+
+exec singularity exec --contain --bind=/tmp --bind="${PWD}" --pwd="${PWD}" "$@"

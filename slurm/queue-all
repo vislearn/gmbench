@@ -1,0 +1,48 @@
+#!/bin/bash
+#
+# Author: Stefan Haller <stefan.haller@iwr.uni-heidelberg.de>
+#
+# This script should run the graph matching benchmark. It is likely that you
+# have to adapt the script to handle special requirements of your HPC cluster.
+#
+# The general idea is that we queue the same job multiple times, because we are
+# not notified if our job ran fully to completion. Usually, there are some
+# unexpected terminations due to reached time limits, etc.
+#
+# We give each job a unique job name and use the dependency parameter
+# "singleton" so that only one of those jobs runs at the same time. If earlier
+# jobs did finalize the job already, later job will see this and exit
+# immediately. This should only incur a small overhead on the cluster.
+#
+set -eu -o pipefail
+
+SLURM_PARAMS_CONVERT=( )
+SLURM_PARAMS_BENCHMARK=( --partition=romeo )
+
+if [[ ! -v MATLAB_LICENSE_SERVER ]]; then
+	echo "Please set MATLAB_LICENSE_SERVER environment variable." >&2
+	exit 1
+fi
+
+count=$(bin/list-matrix-transformation-jobs | wc -l)
+if [[ "${count}" -lt 0 ]]; then
+	for i in {1..10}; do
+		sbatch -J gmbench-matrix-convert-small -d singeleton slurm/matrix-convert-small.batch
+		sbatch -J gmbench-matrix-convert-large -d singeleton slurm/matrix-convert-large.batch
+	done
+fi
+
+# TODO: The matlab jobs need to have a dependency on the matrix conversion jobs.
+# Therefore we have an `exit 0` here to quit. If matrices were created, just
+# remove the `exit` line.
+exit 0
+
+for trial in 1 2 3 4 5; do
+	for i in {1..10}; do
+		sbatch -J "gmbench-dd-ls ${trial}"        -d singleton "${SLURM_PARAMS_BENCHMARK[@]}" slurm/dd-ls.batch        "${trial}"
+		sbatch -J "gmbench-fm ${trial}"           -d singleton "${SLURM_PARAMS_BENCHMARK[@]}" slurm/fm.batch           "${trial}"
+		sbatch -J "gmbench-matlab-large ${trial}" -d singleton "${SLURM_PARAMS_BENCHMARK[@]}" slurm/matlab-large.batch "${trial}"
+		sbatch -J "gmbench-matlab-small ${trial}" -d singleton "${SLURM_PARAMS_BENCHMARK[@]}" slurm/matlab-small.batch "${trial}"
+		sbatch -J "gmbench-mp ${trial}"           -d singleton "${SLURM_PARAMS_BENCHMARK[@]}" slurm/mp.batch           "${trial}"
+	done
+done

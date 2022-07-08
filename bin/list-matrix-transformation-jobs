@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+#
+# Author: Stefan Haller <stefan.haller@iwr.uni-heidelberg.de>
+#
+
+import os.path
+import sys
+
+from collections import namedtuple
+
+
+Bijective = 'bijective'
+NonPositive = 'non_positive'
+ZeroUnaries = 'zero_unaries'
+
+Dataset = namedtuple('Dataset', 'name, num_instances properties')
+
+# Some datasets already have some properties fulfilled.
+DATASETS = (
+    Dataset(name='caltech-large', num_instances=9,   properties=(NonPositive, ZeroUnaries)),
+    Dataset(name='caltech-small', num_instances=21,  properties=(NonPositive, ZeroUnaries)),
+    Dataset(name='car',           num_instances=30,  properties=(Bijective, NonPositive)),
+    Dataset(name='flow',          num_instances=6,   properties=()),
+    Dataset(name='hotel',         num_instances=105, properties=(Bijective,)),
+    Dataset(name='house-dense',   num_instances=105, properties=(Bijective,)),
+    Dataset(name='house-sparse',  num_instances=105, properties=(Bijective, NonPositive, ZeroUnaries)),
+    Dataset(name='motor',         num_instances=20,  properties=(Bijective, NonPositive)),
+    Dataset(name='opengm',        num_instances=4,   properties=(Bijective)),
+    Dataset(name='pairs',         num_instances=16,  properties=()),
+    Dataset(name='worms',         num_instances=30,  properties=()),
+)
+
+# Different methods require different properties of input models. For each of
+# these combination of properties we build matlab matrices.
+REQUIRED_PROPERTIES = (
+    (),
+    (Bijective,), # HBP, FGMD
+    (Bijective, NonPositive), # SM, SMAC, GA, IPFPU, IPFPS, MPM, RRWM, LSM
+    (Bijective, NonPositive, ZeroUnaries), # PM
+)
+
+
+def get_suffix(property):
+    if property == Bijective:
+        return 'b'
+    elif property == NonPositive:
+        return 'n'
+    elif property == ZeroUnaries:
+        return 'z'
+    else:
+        raise ValueError(f'Invalid property: {property}')
+
+
+def get_command_flag(property):
+    if property == Bijective:
+        return '--bijective'
+    elif property == NonPositive:
+        return '--shift'
+    elif property == ZeroUnaries:
+        return '--zero-unaries'
+    else:
+        raise ValueError(f'Invalid property: {property}')
+
+
+def main():
+    for dataset in DATASETS:
+        for i in range(1, dataset.num_instances + 1):
+            instance = f'{dataset.name}{i}'
+            input = f'datasets/{dataset.name}/{instance}.dd.xz'
+
+            for properties in REQUIRED_PROPERTIES:
+                output_suffix = [get_suffix(p) for p in properties]
+
+                missing_properties = [p for p in properties if p not in dataset.properties]
+                command_flags = [get_command_flag(p) for p in missing_properties]
+
+                command_flags = ' '.join(command_flags)
+                output_suffix = '_' + ''.join(output_suffix) if output_suffix else ''
+                output = f'datasets_matlab/{dataset.name}/{instance}{output_suffix}.mat'
+
+                if not os.path.isfile(output):
+                    print(f'matrix-transform --verbose {command_flags} --output-mat {output} {input}')
+
+
+if __name__ == '__main__':
+    main()

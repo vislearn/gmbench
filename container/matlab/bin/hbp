@@ -1,0 +1,10 @@
+#!/bin/bash
+set -eu -o pipefail
+
+METHOD=hbp
+REQUIRES_BIJECTIVE=1
+REQUIRES_NONPOSITIVE=0
+REQUIRES_ZERO_UNARIES=0
+MATLAB_INCLUDES=('hbp' 'fgm')
+
+source /usr/local/lib/gmbench/matlab.sh

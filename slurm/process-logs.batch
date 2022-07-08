@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# Author: Stefan Haller <stefan@iwr.uni-heidelberg.de>
+#
+#SBATCH --time=02:00:00
+#SBATCH --partition=romeo
+#SBATCH --ntasks=32
+#SBATCH --cpus-per-task=1
+#SBATCH --mem-per-cpu=1000M
+
+# Abort on errors and uninitialized variables.
+set -eu -o pipefail
+
+# We enumerate all directories at depth of 4. As the directory structure is
+# `benchmark/${trial}/${method}/${dataset}/${instance}` depth 4 are all "state"
+# directories for a specific method/instance combination.
+#
+# We start ${SLURM_NTASKS} tasks where each is taking 500 of those unprocessed
+# directories, queue them on one of the allocated SLURM nodes, enter the Python
+# singularity container and process the directories. This is done to reduce the
+# SLURM overhead, as the process-logs script will usually not run for more than
+# a few seconds.
+bin/list-process-log-jobs | shuf | xargs -r -d'\n' -n500 -P"${SLURM_NTASKS}" \
+	srun -n1 -N1 -c1 --exclusive slurm/singularity-wrapper images/python.squashfs \
+		bash -c 'for i in "$@"; do bin/process-logs --compress=nonmonotonous "$i"; done; exit 0' bash

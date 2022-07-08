@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# Author: Stefan Haller <stefan.haller@iwr.uni-heidelberg.de>
+#
+set -eu -o pipefail
+
+find benchmark/ -mindepth 4 -maxdepth 4 -type d | while read directory; do
+	# Filter out any directory where the output file is already present.
+	[[ ! -e "${directory}/data.json.gz" ]] && echo "${directory}"
+done

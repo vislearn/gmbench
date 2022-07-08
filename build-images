@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# Author: Stefan Haller <stefan@iwr.uni-heidelberg.de>
+#
+set -eu -o pipefail
+
+build() {
+	local name="$1"
+	local image="localhost/gm-benchmark/${name}"
+	local output="images/${name}.squashfs"
+
+	if [[ -e "${output}" ]]; then
+		output_mtime=$(stat -c %Y "${output}")
+		image_mtime=$(podman image inspect -f '{{ .Created.Unix }}' "${image}")
+		if [[ "${image_mtime}" < "${output_mtime}" ]]; then
+			echo "Image “${output}” newer than container image, skipping."
+			return
+		fi
+	fi
+
+	local mountpoint=$(podman unshare podman image mount "${image}")
+	podman unshare mksquashfs "${mountpoint}" "${output}" -noappend -reproducible
+	podman unshare podman image umount "${image}"
+}
+
+mkdir -p images
+build dd-ls
+build fm
+build matlab
+build matrix-transform
+build mp
+build python
