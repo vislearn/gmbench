@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Algorithms</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="https://vislearn.github.io/gmbench/theme/style.css">
+	<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" type="text/javascript" async></script>
+</head>
+<body>
+	<header>
+		<a href="https://vislearn.github.io/gmbench/">
+			<p id="title">A Comparative Study of Graph Matching Algorithms in Computer Vision</p>
+		</a>
+	</header>
+	<main>
+<article>
+		<h1>Algorithms</h1>
+		<p>Below we summarize the graph matching methods that we consider in our comparison. For a more detailed description please refer to <a class="reference external" href="https://vislearn.github.io/gmbench/publication/">our paper</a> and the <a class="reference internal" href="#references">references</a> below.
+The following table shows an overview of their characteristics and references.</p>
+<table>
+  <caption>
+    <strong>Method properties.</strong>
+    Purely primal heuristics are separated from the dual methods by a horizontal line.
+    Meaning of properties (“+” indicates presence):
+    <em>IQP</em>: addresses IQP formulation;
+    <em>ILP</em>: addresses ILP formulation;
+    <em>bijective</em>: addresses bijective formulation;
+    <em>non-pos.</em>: requires non-positive costs, see <a href="#remark-non-positive">remark below</a>;
+    <em>0-unary</em>: requires zero unary costs;
+    <em>lineariz.</em>: linearization-based method;
+    <em>norm</em>: imposes norm-constraints;
+    <em>doubly</em>: addresses doubly-stochastic relaxation;
+    <em>spectral</em>: solves spectral relaxation;
+    <em>discret.</em>: discretization as in <a href="#remark-discretization">remark below</a>;
+    <em>path fol.</em>: path following method;
+    <em>fusion</em>: utilizes fusion;
+    <em>duality</em>: Lagrange duality-based;
+    <em>SGA</em>: uses dual sub-gradient ascent;
+    <em>BCA</em>: uses dual block-coordinate ascent.
+  </caption>
+  <thead>
+    <tr>
+      <th class="sideways"><span class="sideways">method</span></th>
+      <th class="sideways"><span class="sideways">IQP</span></th>
+      <th class="sideways"><span class="sideways">ILP</span></th>
+      <th class="sideways"><span class="sideways">bijective</span></th>
+      <th class="sideways"><span class="sideways">non-pos.</span></th>
+      <th class="sideways"><span class="sideways">0-unary</span></th>
+      <th class="sideways"><span class="sideways">lineariz.</span></th>
+      <th class="sideways"><span class="sideways">norm</span></th>
+      <th class="sideways"><span class="sideways">doubly</span></th>
+      <th class="sideways"><span class="sideways">spectral</span></th>
+      <th class="sideways"><span class="sideways">discret.</span></th>
+      <th class="sideways"><span class="sideways">path fol.</span></th>
+      <th class="sideways"><span class="sideways">fusion</span></th>
+      <th class="sideways"><span class="sideways">duality</span></th>
+      <th class="sideways"><span class="sideways">SGA</span></th>
+      <th class="sideways"><span class="sideways">BCA</span></th>
+  </thead>
+  <tbody>
+    <tr><td><span class="method">fgmd</span>    </td><td> + </td><td>   </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td>    </td><td>   </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td></tr>
+    <tr><td><span class="method">fm</span>      </td><td>   </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td>    </td><td>   </td><td>   </td><td> + </td><td>   </td><td>   </td><td>   </td></tr>
+    <tr><td><span class="method">fw</span>      </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td> + </td><td>   </td><td> + </td><td>    </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td></tr>
+    <tr><td><span class="method">ga</span>      </td><td> + </td><td>   </td><td> + </td><td>   </td><td>   </td><td> + </td><td>   </td><td> + </td><td>    </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td></tr>
+    <tr><td><span class="method">ipfps</span>   </td><td> + </td><td>   </td><td> + </td><td> + </td><td>   </td><td> + </td><td>   </td><td> + </td><td>    </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td></tr>
+    <tr><td><span class="method">ipfpu</span>   </td><td> + </td><td>   </td><td> + </td><td>   </td><td>   </td><td> + </td><td>   </td><td> + </td><td>    </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td></tr>
+    <tr><td><span class="method">lsm</span>     </td><td> + </td><td>   </td><td> + </td><td> + </td><td>   </td><td>   </td><td> + </td><td>   </td><td>    </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td></tr>
+    <tr><td><span class="method">mpm</span>     </td><td> + </td><td>   </td><td> + </td><td> + </td><td>   </td><td>   </td><td> + </td><td>   </td><td>    </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td></tr>
+    <tr><td><span class="method">pm</span>      </td><td> + </td><td>   </td><td> + </td><td> + </td><td> + </td><td>   </td><td>   </td><td> + </td><td>    </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td></tr>
+    <tr><td><span class="method">rrwm</span>    </td><td> + </td><td>   </td><td> + </td><td>   </td><td>   </td><td> + </td><td>   </td><td> + </td><td>    </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td></tr>
+    <tr><td><span class="method">smac</span>    </td><td> + </td><td>   </td><td> + </td><td> + </td><td>   </td><td>   </td><td> + </td><td>   </td><td> +  </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td></tr>
+    <tr><td><span class="method">sm</span>      </td><td> + </td><td>   </td><td> + </td><td> + </td><td>   </td><td>   </td><td> + </td><td>   </td><td> +  </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td></tr>
+    <tr style="border-top: 1px solid var(--color-foreground);">
+        <td><span class="method">dd-ls0</span>  </td><td>   </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td>    </td><td>   </td><td>   </td><td>   </td><td> + </td><td> + </td><td>   </td></tr>
+    <tr><td><span class="method">dd-ls3</span>  </td><td>   </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td>    </td><td>   </td><td>   </td><td>   </td><td> + </td><td> + </td><td>   </td></tr>
+    <tr><td><span class="method">dd-ls4</span>  </td><td>   </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td>    </td><td>   </td><td>   </td><td>   </td><td> + </td><td> + </td><td>   </td></tr>
+    <tr><td><span class="method">fm-bca</span>  </td><td>   </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td>    </td><td>   </td><td>   </td><td> + </td><td> + </td><td>   </td><td> + </td></tr>
+    <tr><td><span class="method">hbp</span>     </td><td>   </td><td> + </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td>    </td><td>   </td><td>   </td><td>   </td><td> + </td><td>   </td><td> + </td></tr>
+    <tr><td><span class="method">mp</span>      </td><td>   </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td>    </td><td>   </td><td>   </td><td>   </td><td> + </td><td>   </td><td> + </td></tr>
+    <tr><td><span class="method">mp-mcf</span>  </td><td>   </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td>    </td><td>   </td><td>   </td><td>   </td><td> + </td><td>   </td><td> + </td></tr>
+    <tr><td><span class="method">mp-fw</span>   </td><td>   </td><td> + </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td>   </td><td>    </td><td>   </td><td>   </td><td>   </td><td> + </td><td>   </td><td> + </td></tr>
+  </tbody>
+</table><p>We want to keep this benchmark also relevant in the future.
+If you want to see other algorithm included in the benchmark, you can <a class="reference external" href="https://vislearn.github.io/gmbench/submit/">submit results a new solver</a>.</p>
+<section id="primal-heuristics">
+<h2>Primal Heuristics</h2>
+<section id="linearization-based">
+<h3>Linearization based</h3>
+<p>These methods are based on iterative linearizations of the quadratic objective of the graph matching problem.</p>
+<p><em>Iterated projected fixed point</em> (<span class="method">ipfp</span>) <a class="citation-reference" href="#leoardeanu09" id="citation-reference-1" role="doc-biblioref">[Leoardeanu09]</a> solves on each iteration the LAP obtained through linearization in the vicinity of a current, in general non-integer, assignment.
+Between iterations the quadratic objective is optimized along the direction to the obtained LAP solution, which yields a new, in general non-integer assignment.
+We evaluate two versions of <span class="method">ipfp</span> which differ by their initialization:
+<span class="method">ipfpu</span> is initialized with <span class="math">
+\(x^0\in [0,1]^{\mathcal V\times\mathcal L}\)</span>, where <span class="math">
+\(x^0_{is}=1/\sqrt{N}\)</span> if <span class="math">
+\(c_{is,is}<\infty\)</span>, and <span class="math">
+\(x^0_{is}=0\)</span> otherwise.
+Here, <span class="math">
+\(N:= |\{ is\in\mathcal V\times\mathcal L \mid c_{is,is}< \infty \}|\)</span>.
+<span class="method">ipfps</span> starts from the result of the spectral matching <span class="method">sm</span> <a class="citation-reference" href="#leordeanu05" id="citation-reference-2" role="doc-biblioref">[Leordeanu05]</a> described below.</p>
+<p><em>Graduated assignment</em> (<span class="method">ga</span>) <a class="citation-reference" href="#gold96" id="citation-reference-3" role="doc-biblioref">[Gold96]</a> optimizes the doubly-stochastic relaxation.
+On each iteration it approximately solves the LAP obtained through linearization in the vicinity of a current, in general non-integer, assignment utilizing the Sinkhorn algorithm <a class="citation-reference" href="#kosowsky94" id="citation-reference-4" role="doc-biblioref">[Kosowsky94]</a> for a given fixed temperature.
+The obtained approximate solution is used afterwards as the new assignment.
+The temperature is decreased over iterations to gradually make the solutions closer to integral.</p>
+<p><em>Fast approximate quadratic programming</em> (<span class="method">fw</span>) <a class="citation-reference" href="#vogelstein15" id="citation-reference-5" role="doc-biblioref">[Vogelstein15]</a> considers the Frank-Wolfe algprithm <a class="citation-reference" href="#frank56" id="citation-reference-6" role="doc-biblioref">[Frank56]</a> for optimizing over the set of doubly-semi-stochastic matrices.
+Each iteration first solves a LAP to find the optimum of the linearization at the current solution, followed by a line search in order to find the best convex combination of the current and the new solution.
+To obtain an integer solution, the objective of the LAP solution is evaluated in each iteration, and the lowest one among all solutions is kept.
+The initial LAP is based on the unary costs only.
+The implementation <a class="citation-reference" href="#swoboda21" id="citation-reference-7" role="doc-biblioref">[Swoboda21]</a> we evaluate is applicable to the general Lawler form of the problem, in contrast to the Koopmans-Beckmann form addressed in <a class="citation-reference" href="#vogelstein15" id="citation-reference-8" role="doc-biblioref">[Vogelstein15]</a>.</p>
+</section>
+<section id="norm-constraints-based">
+<h3>Norm constraints based</h3>
+<p><em>Spectral matching</em> (<span class="method">sm</span>) <a class="citation-reference" href="#leordeanu05" id="citation-reference-9" role="doc-biblioref">[Leordeanu05]</a>
+uses a spectral relaxation that amounts to a Rayleigh quotient problem <a class="citation-reference" href="#horn12" id="citation-reference-10" role="doc-biblioref">[Horn12]</a> which can be optimized by the power iteration method. Here, each update comprises of a simple matrix multiplication and a subsequent normalization, so that <span class="math">
+\(x^t\)</span> is iteratively updated via <span class="math">
+\(x^{t+1} =  -C x^t / \|  C x^t\|_2\)</span>.</p>
+<p><em>Spectral matching with affine constraints</em> (<span class="method">smac</span>) <a class="citation-reference" href="#cour07" id="citation-reference-11" role="doc-biblioref">[Cour07]</a>
+is similar to <span class="method">sm</span>, but additionally takes into account affine equality constraints that enforce one-to-one matchings. The resulting formulation  amounts to a Rayleigh quotient problem under affine constraints, that can efficiently be computed in terms of the eigenvalue decomposition.</p>
+<p><em>Max-pooling matching</em> (<span class="method">mpm</span>) <a class="citation-reference" href="#cho14" id="citation-reference-12" role="doc-biblioref">[Cho14]</a> resembles <span class="method">sm</span>, but it replaces the sum-pooling implemented in terms of the matrix multiplication <span class="math">
+\(-C x\)</span> in the power iteration update of <span class="method">SM</span> by a max-pooling operation.
+With that, only candidate matches with the smallest costs are taken into account.</p>
+<p><em>Local sparse model</em> (<span class="method">lsm</span>) <a class="citation-reference" href="#jiang15" id="citation-reference-13" role="doc-biblioref">[Jiang15]</a> solves the relaxation
+<span class="math">
+\(\max_{x} x^\top C x\)</span>, s.t. <span class="math">
+\(||x||_{1,2} = \sqrt{\sum_{i=1}^{|\mathcal V|} \big( \sum_{k=1}^{|\mathcal L|} |x_{ik}| \big)} = 1\)</span>, <span class="math">
+\(x \geq 0\)</span>.
+The <span class="math">
+\(l_{1,2}\)</span>-norm <span class="math">
+\(||x||_{1,2}\)</span> should encourage the solution of the above relaxation to be sparse in each row when treating <span class="math">
+\(x\)</span> as a matrix.
+This resembles the sparsity property of permutation matrices, which satisfy <span class="math">
+\(||x||_{1,2}=|\mathcal V|\)</span>.</p>
+<p id="remark-non-positive"><em>Remark:</em>
+All of the norm constraints based algorithms described above require non-positive <a class="footnote-reference brackets" href="#footnote-1" id="footnote-reference-1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> costs in order to guarantee convergence of the underlying iterative techniques.
+This condition can be w.l.o.g. assumed for any graph matching problem.
+The corresponding cost transformation is described in the supplement.</p>
+</section>
+<section id="probabilistic-interpretation-based">
+<h3>Probabilistic interpretation based</h3>
+<p><em>Reweighted Random Walks Matching</em> (<span class="method">rrwm</span>) <a class="citation-reference" href="#cho10" id="citation-reference-14" role="doc-biblioref">[Cho10]</a> interprets graph matching as the problem of selecting reliable nodes in an <em>association graph</em>, whose weighted adjacency matrix is given by <span class="math">
+\(-C\)</span>.
+Nodes are selected through a random walk that starts from one node and randomly visits nodes according to a Markov transition matrix derived from the edge weights of the association graph.
+In order to take into account matching constraints, the authors of <a class="citation-reference" href="#cho10" id="citation-reference-15" role="doc-biblioref">[Cho10]</a> consider a reweighted random walk strategy.</p>
+<p><em>Probabilistic matching</em> (<span class="method">pm</span>) <a class="citation-reference" href="#zass08" id="citation-reference-16" role="doc-biblioref">[Zass08]</a> considers a probabilistic formulation of graph matching in which the quadratic objective is replaced by a relative entropy objective.
+It is shown that by doing so one can obtain a convex problem formulation via marginalization, which is optimized in terms of an iterative successive projection algorithm.</p>
+<p id="remark-discretization"><em>Remark:</em>
+Most of the primal heuristics considered above aim to optimize the quadratic objective of the graph matching problem over a continuous set such as, e.g., the Birkhoff polytope.
+The resulting assignment <span class="math">
+\(x\in\mathcal R^{\mathcal V\times\mathcal L}\)</span> is, therefore, not guaranteed to be integer.
+As suggested in <a class="citation-reference" href="#cho10" id="citation-reference-17" role="doc-biblioref">[Cho10]</a>, to obtain an integer assignment we solve a LAP with <span class="math">
+\((-x)\)</span> treated as the cost matrix.
+We apply this procedure as a postprocessing step for <span class="method">ipfp</span>, <span class="method">ga</span>, <span class="method">sm</span>, <span class="method">smac</span>, <span class="method">mpm</span>, <span class="method">lsm</span>, <span class="method">rrwm</span>, and <span class="method">pm</span>.
+Note that this postprocessing does not change an integer assignment.</p>
+</section>
+<section id="path-following-based">
+<h3>Path following based</h3>
+<p><em>Factorized graph matching</em> (<span class="method">fgmd</span>) <a class="citation-reference" href="#zhou16" id="citation-reference-18" role="doc-biblioref">[Zhou16]</a> proposes an efficient factorization of the cost matrix to speed-up computations, and is based on the convex-concave path following strategy.
+Individual problems from the path are solved with the Frank-Wolfe method <a class="citation-reference" href="#frank56" id="citation-reference-19" role="doc-biblioref">[Frank56]</a>.</p>
+</section>
+<section id="randomized-generation-and-fusion-based">
+<h3>Randomized generation and fusion based</h3>
+<p><em>Fusion moves with a greedy heuristic</em> (<span class="method">fm</span>) <a class="citation-reference" href="#hutschenreiter21" id="citation-reference-20" role="doc-biblioref">[Hutschenreiter21]</a>
+is based on the graphical model representation and consists of two parts: A randomized greedy assignment generation, and <em>fusion</em> of the assignments.
+The randomized generator greedily fixes labels in the nodes in a way that minimizes the objective value restricted to the already fixed labels.
+The fusion procedure merges the current assignment with the next generated one by approximately solving an auxiliary <em>binary</em> MAP inference problem utilizing QPBO-I <a class="citation-reference" href="#rother07" id="citation-reference-21" role="doc-biblioref">[Rother07]</a>.
+The merged solution is guaranteed to be at least as good as the two input assignments.
+This property guarantees monotonic improvement of the objective value.</p>
+</section>
+</section>
+<section id="lagrange-duality-based-techniques">
+<h2>Lagrange duality-based techniques</h2>
+<p>The methods below consider the Lagrange decompositions <a class="citation-reference" href="#guignard87" id="citation-reference-22" role="doc-biblioref">[Guignard87]</a> of the graph matching problem <a class="citation-reference" href="#toressani13" id="citation-reference-23" role="doc-biblioref">[Toressani13]</a>,
+or its graphical model representation, see <a class="citation-reference" href="#zhang16" id="citation-reference-24" role="doc-biblioref">[Zhang16]</a>, <a class="citation-reference" href="#swoboda17" id="citation-reference-25" role="doc-biblioref">[Swoboda17]</a> and <a class="citation-reference" href="#hutschenreiter21" id="citation-reference-26" role="doc-biblioref">[Hutschenreiter21]</a>, and optimize the corresponding dual.
+The methods differ in the dual optimization and chosen primal solution reconstruction algorithms.</p>
+<section id="block-coordinate-methods-hbp-mp-fm-bca">
+<h3>Block-coordinate methods (<span class="method">hbp</span>, <span class="method">mp-*</span>, <span class="method">fm-bca</span>)</h3>
+<p>The works <a class="citation-reference" href="#zhang16" id="citation-reference-27" role="doc-biblioref">[Zhang16]</a>, <a class="citation-reference" href="#swoboda17" id="citation-reference-28" role="doc-biblioref">[Swoboda17]</a> and <a class="citation-reference" href="#hutschenreiter21" id="citation-reference-29" role="doc-biblioref">[Hutschenreiter21]</a> employ a block-coordinate ascent (BCA) technique to optimize the dual problem.
+Since the dual is piece-wise linear, BCA algorithms may not attain the dual optimum, but may get stuck in a sub-optimal fixed point, see <a class="citation-reference" href="#bertsekas99" id="citation-reference-30" role="doc-biblioref">[Bertsekas99]</a> and <a class="citation-reference" href="#savchynskyy19" id="citation-reference-31" role="doc-biblioref">[Savchynskyy19]</a>.</p>
+<p>Although the elementary operations performed by these algorithms are very similar, their convergence speed and attained fixed points differ drastically. We refer to <a class="reference external" href="https://vislearn.github.io/gmbench/publication/">Our Paper</a> for more details.</p>
+</section>
+<section id="subgradient-method-dd-ls">
+<h3>Subgradient method (<span class="method">dd-ls*</span>)</h3>
+<p>The algorithms denoted as <span class="method">dd-ls*</span> with <span class="method">*</span> being <span class="method">0</span>, <span class="method">3</span> or <span class="method">4</span> represent different variants of a dual subgradient optimization method <a class="citation-reference" href="#toressani13" id="citation-reference-32" role="doc-biblioref">[Toressani13]</a>.
+The variant <span class="method">dd-ls0</span> addresses the relaxation equivalent to a symmetrized graphical model formulation, see supplement of <a class="reference external" href="https://vislearn.github.io/gmbench/publication/">Our Paper</a> for a description.
+This is achieved by considering the Lagrange decomposition of the problem into two graphical models, with <span class="math">
+\(\mathcal V\)</span> and <span class="math">
+\(\mathcal L\)</span> being the set of nodes, respectively, and a LAP subproblem.
+The graphical models are further decomposed into acyclic ones, ie trees, solvable by dynamic programming, see, e.g., Chapter 9 of <a class="citation-reference" href="#savchynskyy19" id="citation-reference-33" role="doc-biblioref">[Savchynskyy19]</a>.
+The <em>tree decomposition</em> is not described in <a class="citation-reference" href="#toressani13" id="citation-reference-34" role="doc-biblioref">[Toressani13]</a>, and we reconstructed it based on the source code <a class="citation-reference" href="#kolmogorov15" id="citation-reference-35" role="doc-biblioref">[Kolmogorov15]</a> and communication with the authors.
+As we observed it to be more efficient than the <em>max-flow subproblems</em> suggested in the paper <a class="citation-reference" href="#toressani13" id="citation-reference-36" role="doc-biblioref">[Toressani13]</a> the latter were not used in our evaluation.</p>
+<p>Variants <span class="method">dd-ls3</span> and <span class="method">dd-ls4</span> tighten the relaxation of <span class="method">dd-ls0</span> by considering <em>local subproblems</em> of both graphical models in the decomposition.
+These are obtained by reducing the node sets <span class="math">
+\(\mathcal V\)</span> and <span class="math">
+\(\mathcal L\)</span> to <span class="math">
+\(3\)</span> or respectively <span class="math">
+\(4\)</span> elements inducing a connected subgraph of the graphical model, see <a class="citation-reference" href="#toressani13" id="citation-reference-37" role="doc-biblioref">[Toressani13]</a> for details.</p>
+<!-- references: -->
+</section>
+</section>
+<section id="references">
+<h2>References</h2>
+<div role="list" class="citation-list">
+<div class="citation" id="bertsekas99" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-30">Bertsekas99</a><span class="fn-bracket">]</span></span>
+<p>D.P. Bertsekas.
+“Nonlinear programming, 2nd edition”.
+Athena scientific, 1999.</p>
+</div>
+<div class="citation" id="cho10" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>Cho10<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#citation-reference-14">1</a>,<a role="doc-backlink" href="#citation-reference-15">2</a>,<a role="doc-backlink" href="#citation-reference-17">3</a>)</span>
+<p>M. Cho, J. Lee, K.M. Lee.
+“Reweighted Random Walks for Graph Matching”.
+ECCV, 2010.</p>
+</div>
+<div class="citation" id="cho14" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-12">Cho14</a><span class="fn-bracket">]</span></span>
+<p>M. Cho, J. Sun, O. Duchenne, J. Ponce.
+“Finding Matches in a Haystack: A Max-Pooling Strategy for Graph Matching in the Presence of Outliers”.
+CVPR, 2014.</p>
+</div>
+<div class="citation" id="cour07" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-11">Cour07</a><span class="fn-bracket">]</span></span>
+<p>T. Cour, P. Srinivasan, J. Shi.
+“Balanced Graph Matching”.
+NeurIPS, 2007.</p>
+</div>
+<div class="citation" id="frank56" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>Frank56<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#citation-reference-6">1</a>,<a role="doc-backlink" href="#citation-reference-19">2</a>)</span>
+<p>M. Frank, P. Wolfe, et.al.
+“An Algorithm for Quadratic Programming”.
+Naval Research Logistics Quarterly, 1956.</p>
+</div>
+<div class="citation" id="gold96" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-3">Gold96</a><span class="fn-bracket">]</span></span>
+<p>S. Gold, A. Rangarajan.
+“A Graduated Assignment Algorithm for Graph Matching”.
+PAMI, 1996.</p>
+</div>
+<div class="citation" id="guignard87" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-22">Guignard87</a><span class="fn-bracket">]</span></span>
+<p>M. Guignard, S. Kim.
+“Lagrangean Decomposition: A Model Yielding Stronger Lagrangean Bounds”.
+Mathematical Programming, 1987.</p>
+</div>
+<div class="citation" id="horn12" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-10">Horn12</a><span class="fn-bracket">]</span></span>
+<p>R.A. Horn, C.R. Johnson.
+“Matrix Analysis”.
+Cambridge University Press, 2012.</p>
+</div>
+<div class="citation" id="jiang15" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-13">Jiang15</a><span class="fn-bracket">]</span></span>
+<p>B. Jiang, J. Tang, C. Ding, B. Luo.
+“A Local Sparse Model for Matching Problem”.
+AAAI, 2015.</p>
+</div>
+<div class="citation" id="hutschenreiter21" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>Hutschenreiter21<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#citation-reference-20">1</a>,<a role="doc-backlink" href="#citation-reference-26">2</a>,<a role="doc-backlink" href="#citation-reference-29">3</a>)</span>
+<p>L. Hutschenreiter, S. Haller, L. Feineis, C. Rother, D. Kainmüller, B. Savchynskyy.
+“Fusion Moves for Graph Matching”.
+ICCV, 2021.</p>
+</div>
+<div class="citation" id="kolmogorov15" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-35">Kolmogorov15</a><span class="fn-bracket">]</span></span>
+<p>V. Kolmogorov.
+“Feature Correspondence via Graph Matching Source Code”.
+2015.
+<a class="reference external" href="https://pub.ist.ac.at/~vnk/software.html#GRAPH-MATCHING">[URL]</a></p>
+</div>
+<div class="citation" id="kosowsky94" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-4">Kosowsky94</a><span class="fn-bracket">]</span></span>
+<p>J.J. Kosowsky, A.L. Yuille.,
+“The Invisible Hand Algorithm: Solving the Assignment Problem with Statistical Physics”.
+Neural Networks, 1994.</p>
+</div>
+<div class="citation" id="leordeanu05" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>Leordeanu05<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#citation-reference-2">1</a>,<a role="doc-backlink" href="#citation-reference-9">2</a>)</span>
+<p>M. Leordeanu, M. Hebert.
+“A Spectral Technique for Correspondence Problems Using Pairwise Constraints”.
+ICCV, 2005.</p>
+</div>
+<div class="citation" id="leoardeanu09" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-1">Leoardeanu09</a><span class="fn-bracket">]</span></span>
+<p>M. Leordeanu, M. Hebert, R. Sukthankar.
+“An Integer Projected Fixed Point Method for Graph Matching and MAP Inference”.
+NeurIPS, 2009.</p>
+</div>
+<div class="citation" id="rother07" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-21">Rother07</a><span class="fn-bracket">]</span></span>
+<p>C. Rother, V. Kolmogorov, V.S. Lempitsky, M. Szummer.
+“Optimizing Binary MRFs via Extended Roof Duality”.
+CVPR, 2007.</p>
+</div>
+<div class="citation" id="savchynskyy19" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>Savchynskyy19<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#citation-reference-31">1</a>,<a role="doc-backlink" href="#citation-reference-33">2</a>)</span>
+<p>B. Savchynskyy.
+“Discrete Graphical Models – An Optimization Perspective”.
+Foundations and Trends in Computer Graphics and Vision, 2019.</p>
+</div>
+<div class="citation" id="swoboda17" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>Swoboda17<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#citation-reference-25">1</a>,<a role="doc-backlink" href="#citation-reference-28">2</a>)</span>
+<p>P. Swoboda, C. Rother, H. Abu Alhaija, D. Kainmüller, B. Savchynskyy.
+“A Study of Lagrangean Decompositions and Dual Ascent Solvers for Graph Matching”.
+CVPR, 2017.</p>
+</div>
+<div class="citation" id="swoboda21" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-7">Swoboda21</a><span class="fn-bracket">]</span></span>
+<p>P. Swoboda.
+“LPMP Source Code”.
+2021.
+<a class="reference external" href="https://github.com/LPMP/LPMP">[URL]</a></p>
+</div>
+<div class="citation" id="toressani13" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>Toressani13<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#citation-reference-23">1</a>,<a role="doc-backlink" href="#citation-reference-32">2</a>,<a role="doc-backlink" href="#citation-reference-34">3</a>,<a role="doc-backlink" href="#citation-reference-36">4</a>,<a role="doc-backlink" href="#citation-reference-37">5</a>)</span>
+<p>L. Torresani, V. Kolmogorov, C. Rother.
+“A Dual Decomposition Approach to Feature Correspondence”.
+PAMI, 2013.</p>
+</div>
+<div class="citation" id="vogelstein15" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>Vogelstein15<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#citation-reference-5">1</a>,<a role="doc-backlink" href="#citation-reference-8">2</a>)</span>
+<p>J.T. Vogelstein, J.M. Conroy, V. Lyzinski, L.J. Podrazik, S.G. Kratzer, E.T. Harley, D.E. Fishkind, R.J. Vogelstein, C.E. Priebe.
+“Fast Approximate Quadratic Programming for Graph Matching”.
+PLOS ONE, 2015.</p>
+</div>
+<div class="citation" id="zass08" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-16">Zass08</a><span class="fn-bracket">]</span></span>
+<p>R. Zass, A. Shashua.
+“Probabilistic Graph and Hypergraph Matching”.
+CVPR, 2008.</p>
+</div>
+<div class="citation" id="zhang16" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>Zhang16<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#citation-reference-24">1</a>,<a role="doc-backlink" href="#citation-reference-27">2</a>)</span>
+<p>Z. Zhang, Q. Shi, J. McAuley, W. Wei, Y. Zhang, A. van den Hengel.
+“Pairwise Matching Through Max-Weight Bipartite Belief Propagation”.
+CVPR, 2016.</p>
+</div>
+<div class="citation" id="zhou16" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-18">Zhou16</a><span class="fn-bracket">]</span></span>
+<p>F. Zhou, F.D. la Torre.
+“Factorized Graph Matching”.
+PAMI, 2016.</p>
+</div>
+</div>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footnote-1" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#footnote-reference-1">1</a><span class="fn-bracket">]</span></span>
+<p>Non-negative in original maximization formulations.</p>
+</aside>
+<aside class="footnote brackets" id="footnote-2" role="note">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<p><em>Reparametrized</em> costs are also known as <em>reduced</em> costs, e.g., in the simplex tableau.</p>
+</aside>
+</aside>
+</section>
+
+	</article>	</main>
+	<nav>
+		<p>Sitemap:</p>
+		<ul>
+			<li><a href="https://vislearn.github.io/gmbench/">Home</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/news/">News</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/datasets/">Datasets</a></li>
+			<li class="active"><a href="https://vislearn.github.io/gmbench/algorithms/">Algorithms</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/results/">Results</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/submit/">Submit</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/publication/">Publication</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/contact/">Contact</a></li>
+			<li><a href="https://github.com/vislearn/gmbench">Our Code</a></li>
+		</li>
+	</nav>
+	<footer>
+	</footer>
+</body>
+</html>

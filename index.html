@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Home</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="https://vislearn.github.io/gmbench/theme/style.css">
+	<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" type="text/javascript" async></script>
+</head>
+<body>
+	<header>
+		<a href="https://vislearn.github.io/gmbench/">
+			<p id="title">A Comparative Study of Graph Matching Algorithms in Computer Vision</p>
+		</a>
+	</header>
+	<main>
+<article>
+		<h1>Home</h1>
+		<section id="about-this-site">
+<h2>About this site</h2>
+<p>This is the companion website to our ECCV 2022 paper <a class="reference external" href="https://vislearn.github.io/gmbench/publication/">“A Comparative Study of Graph Matching Algorithms in Computer Vision”</a>. Please <a class="reference external" href="https://vislearn.github.io/gmbench/publication/">cite it</a> if you use any information from this website.</p>
+<p>Here we publish <a class="reference external" href="https://vislearn.github.io/gmbench/results/">detailed benchmarking results</a> and provide <a class="reference external" href="https://vislearn.github.io/gmbench/datasets/">the used datasets</a> for download.</p>
+<p>We will do our best to keep the results up to date.
+If you want to <a class="reference external" href="https://vislearn.github.io/gmbench/submit/">have your graph matching algorithm or your data included on this website</a>, please follow the procedure described at the dedicated page.</p>
+</section>
+<section id="the-graph-matching-problem">
+<h2>The graph matching problem</h2>
+<p>The graph matching optimization problem is an essential component for many tasks in computer vision, such as bringing two deformable objects in correspondence.
+Naturally, a wide range of applicable algorithms have been proposed in the last decades.
+Since a common standard benchmark has not been developed, their performance claims are often hard to verify as evaluation on differing problem instances and criteria make the results incomparable.
+To address these shortcomings, we present a comparative study of graph matching algorithms able to optimize graph matching problem in the generic Lawler.
+The goal of graph matching is to find a <em>matching</em>, or mutual <em>assignment</em>, between elements of the sets <span class="math">
+\(\mathcal V\)</span> and <span class="math">
+\(\mathcal L\)</span> that minimizes the total cost for all pairs of assignments, i.e.</p>
+<div class="math">
+\begin{align*}
+\min_{x\in\{0,1\}^{\mathcal V\times \mathcal L }} & \sum_{\substack{i,j\in\mathcal V\\ s,l\in\mathcal L}} c_{is,jl} \, x_{is}\, x_{jl} \\
+\text{subject to}\quad & \forall i\in\mathcal V\colon\sum_{s\in\mathcal L}x_{is}\le 1\,, \text{ and} \\
+                       & \forall s\in\mathcal L\colon\sum_{i\in\mathcal V}x_{is}\le 1\,.
+\end{align*}</div><p>Here, <span class="math">
+\(\mathcal V\)</span> and <span class="math">
+\(\mathcal L\)</span> are the two finite sets, whose elements we want to match to each other.
+For each pair <span class="math">
+\(i,j\in \mathcal V\)</span> and each pair <span class="math">
+\(s,l\in\mathcal L\)</span> a <em>cost</em> <span class="math">
+\(c_{is,jl}\in\mathbb R\)</span> is given.
+The vector <span class="math">
+\(x\)</span> defines the matching as <span class="math">
+\(x_{is}=1\)</span> corresponds to assigning <span class="math">
+\(i\)</span> to <span class="math">
+\(s\)</span>.
+The inequalities allow for this assignment to be <em>incomplete</em>, i.e., some elements of both sets may remain unassigned.</p>
+<p>We create a uniform benchmark where we collect and categorize a large set of existing and publicly available computer vision graph matching problems in a common format.
+At the same time we collect and categorize the most popular open-source implementations of graph matching algorithms.
+Their performance is evaluated in a way that is in line with the best practices for comparing optimization algorithms.
+The study is designed to be reproducible and extensible to serve as a valuable resource in the future.</p>
+<p>Our study provides three notable insights:</p>
+<ol class="arabic simple">
+<li><p>Popular problem instances are exactly solvable in substantially less than 1 second and, therefore, are insufficient for future empirical evaluations.</p></li>
+<li><p>The most popular baseline methods are highly inferior to the best available methods.</p></li>
+<li><p>Despite the NP-hardness of the problem, instances coming from vision applications are often solvable in a few seconds even for graphs with more than 500 nodes.</p></li>
+</ol>
+<p><a class="reference external" href="https://vislearn.github.io/gmbench/publication/">Check our paper</a> for more details!</p>
+</section>
+
+	</article>	</main>
+	<nav>
+		<p>Sitemap:</p>
+		<ul>
+			<li class="active"><a href="https://vislearn.github.io/gmbench/">Home</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/news/">News</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/datasets/">Datasets</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/algorithms/">Algorithms</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/results/">Results</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/submit/">Submit</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/publication/">Publication</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/contact/">Contact</a></li>
+			<li><a href="https://github.com/vislearn/gmbench">Our Code</a></li>
+		</li>
+	</nav>
+	<footer>
+	</footer>
+</body>
+</html>

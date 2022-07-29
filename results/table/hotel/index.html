@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Benchmark Results for “hotel”</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="https://vislearn.github.io/gmbench/theme/style.css">
+	<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" type="text/javascript" async></script>
+</head>
+<body>
+	<header>
+		<a href="https://vislearn.github.io/gmbench/">
+			<p id="title">A Comparative Study of Graph Matching Algorithms in Computer Vision</p>
+		</a>
+	</header>
+	<main>
+<section id="content" class="body">
+  <header>
+    <h2 class="entry-title">
+      <a href="https://vislearn.github.io/gmbench/results/table/hotel/" rel="bookmark" title="Permalink to page">
+        Benchmark Results for “hotel”
+      </a>
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>
+      This page shows the benchmarks results for the dataset “hotel”.
+      The reported values, bounds and accuracies are averaged across all instances of the dataset.
+    </p>
+
+    <h3>Run time 1s</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>method</th>
+          <th>avg value</th>
+          <th>avg bound</th>
+          <th>feasible</th>
+          <th>optimal</th>
+          <th>accuracy</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="method">dd-ls0</span></td>
+          <td class="best">-4293</td>
+          <td class="">-4293.81</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.81%</td>
+        </tr>
+        <tr>
+          <td><span class="method">dd-ls3</span></td>
+          <td class="best">-4293</td>
+          <td class="best">-4293.64</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.81%</td>
+        </tr>
+        <tr>
+          <td><span class="method">dd-ls4</span></td>
+          <td class="">-4290.81</td>
+          <td class="">-4296.55</td>
+          <td class="best">105 / 105</td>
+          <td class="">103 / 105</td>
+          <td>99.59%</td>
+        </tr>
+        <tr>
+          <td><span class="method">fgmd</span></td>
+          <td class="">inf</td>
+          <td class="">-inf</td>
+          <td class="">0 / 105</td>
+          <td class="">0 / 105</td>
+          <td>&ndash;</td>
+        </tr>
+        <tr>
+          <td><span class="method">fm-bca</span></td>
+          <td class="best">-4293</td>
+          <td class="">-4300.38</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.81%</td>
+        </tr>
+        <tr>
+          <td><span class="method">fm</span></td>
+          <td class="">-4292.23</td>
+          <td class="">-4405.84</td>
+          <td class="best">105 / 105</td>
+          <td class="">102 / 105</td>
+          <td>99.62%</td>
+        </tr>
+        <tr>
+          <td><span class="method">fw</span></td>
+          <td class="">-4287.51</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">102 / 105</td>
+          <td>98.89%</td>
+        </tr>
+        <tr>
+          <td><span class="method">ga</span></td>
+          <td class="">946.555</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>14.51%</td>
+        </tr>
+        <tr>
+          <td><span class="method">hbp</span></td>
+          <td class="">inf</td>
+          <td class="">-inf</td>
+          <td class="">102 / 105</td>
+          <td class="">102 / 105</td>
+          <td>&ndash;</td>
+        </tr>
+        <tr>
+          <td><span class="method">ipfps</span></td>
+          <td class="">1050.67</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>14.41%</td>
+        </tr>
+        <tr>
+          <td><span class="method">ipfpu</span></td>
+          <td class="">1061.84</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>14.54%</td>
+        </tr>
+        <tr>
+          <td><span class="method">lsm</span></td>
+          <td class="">inf</td>
+          <td class="">-inf</td>
+          <td class="">3 / 105</td>
+          <td class="">0 / 105</td>
+          <td>&ndash;</td>
+        </tr>
+        <tr>
+          <td><span class="method">mp</span></td>
+          <td class="">-4279.9</td>
+          <td class="">-4299.21</td>
+          <td class="best">105 / 105</td>
+          <td class="">98 / 105</td>
+          <td>99.05%</td>
+        </tr>
+        <tr>
+          <td><span class="method">mp-fw</span></td>
+          <td class="">-4291.56</td>
+          <td class="">-4306.13</td>
+          <td class="best">105 / 105</td>
+          <td class="">104 / 105</td>
+          <td>99.56%</td>
+        </tr>
+        <tr>
+          <td><span class="method">mpm</span></td>
+          <td class="">-2584.64</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">45 / 105</td>
+          <td>77.84%</td>
+        </tr>
+        <tr>
+          <td><span class="method">mp-mcf</span></td>
+          <td class="">-4245.26</td>
+          <td class="">-4302.6</td>
+          <td class="best">105 / 105</td>
+          <td class="">94 / 105</td>
+          <td>97.81%</td>
+        </tr>
+        <tr>
+          <td><span class="method">pm</span></td>
+          <td class="">775.269</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>33.40%</td>
+        </tr>
+        <tr>
+          <td><span class="method">rrwm</span></td>
+          <td class="">743.823</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>15.27%</td>
+        </tr>
+        <tr>
+          <td><span class="method">sm</span></td>
+          <td class="">1085.55</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>13.17%</td>
+        </tr>
+        <tr>
+          <td><span class="method">smac</span></td>
+          <td class="">-1570.79</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">1 / 105</td>
+          <td>61.17%</td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Run time 10s</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>method</th>
+          <th>avg value</th>
+          <th>avg bound</th>
+          <th>feasible</th>
+          <th>optimal</th>
+          <th>accuracy</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="method">dd-ls0</span></td>
+          <td class="best">-4293</td>
+          <td class="">-4293.81</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.81%</td>
+        </tr>
+        <tr>
+          <td><span class="method">dd-ls3</span></td>
+          <td class="best">-4293</td>
+          <td class="">-4293.31</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.81%</td>
+        </tr>
+        <tr>
+          <td><span class="method">dd-ls4</span></td>
+          <td class="best">-4293</td>
+          <td class="best">-4293.27</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.81%</td>
+        </tr>
+        <tr>
+          <td><span class="method">fgmd</span></td>
+          <td class="">inf</td>
+          <td class="">-inf</td>
+          <td class="">0 / 105</td>
+          <td class="">0 / 105</td>
+          <td>&ndash;</td>
+        </tr>
+        <tr>
+          <td><span class="method">fm-bca</span></td>
+          <td class="best">-4293</td>
+          <td class="">-4299.53</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.81%</td>
+        </tr>
+        <tr>
+          <td><span class="method">fm</span></td>
+          <td class="">-4292.23</td>
+          <td class="">-4405.84</td>
+          <td class="best">105 / 105</td>
+          <td class="">102 / 105</td>
+          <td>99.62%</td>
+        </tr>
+        <tr>
+          <td><span class="method">fw</span></td>
+          <td class="">-4287.51</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">102 / 105</td>
+          <td>98.89%</td>
+        </tr>
+        <tr>
+          <td><span class="method">ga</span></td>
+          <td class="">946.555</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>14.51%</td>
+        </tr>
+        <tr>
+          <td><span class="method">hbp</span></td>
+          <td class="">-4292.99</td>
+          <td class="">-4304.7</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.75%</td>
+        </tr>
+        <tr>
+          <td><span class="method">ipfps</span></td>
+          <td class="">1050.67</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>14.41%</td>
+        </tr>
+        <tr>
+          <td><span class="method">ipfpu</span></td>
+          <td class="">1061.84</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>14.54%</td>
+        </tr>
+        <tr>
+          <td><span class="method">lsm</span></td>
+          <td class="">1729.32</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>12.19%</td>
+        </tr>
+        <tr>
+          <td><span class="method">mp</span></td>
+          <td class="">-4284.99</td>
+          <td class="">-4299.19</td>
+          <td class="best">105 / 105</td>
+          <td class="">101 / 105</td>
+          <td>99.30%</td>
+        </tr>
+        <tr>
+          <td><span class="method">mp-fw</span></td>
+          <td class="best">-4293</td>
+          <td class="">-4299.4</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.81%</td>
+        </tr>
+        <tr>
+          <td><span class="method">mpm</span></td>
+          <td class="">-2584.64</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">45 / 105</td>
+          <td>77.84%</td>
+        </tr>
+        <tr>
+          <td><span class="method">mp-mcf</span></td>
+          <td class="">-4263.98</td>
+          <td class="">-4298</td>
+          <td class="best">105 / 105</td>
+          <td class="">98 / 105</td>
+          <td>98.51%</td>
+        </tr>
+        <tr>
+          <td><span class="method">pm</span></td>
+          <td class="">775.269</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>33.40%</td>
+        </tr>
+        <tr>
+          <td><span class="method">rrwm</span></td>
+          <td class="">743.823</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>15.27%</td>
+        </tr>
+        <tr>
+          <td><span class="method">sm</span></td>
+          <td class="">1085.55</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>13.17%</td>
+        </tr>
+        <tr>
+          <td><span class="method">smac</span></td>
+          <td class="">-1570.79</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">1 / 105</td>
+          <td>61.17%</td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Run time 100s</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>method</th>
+          <th>avg value</th>
+          <th>avg bound</th>
+          <th>feasible</th>
+          <th>optimal</th>
+          <th>accuracy</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="method">dd-ls0</span></td>
+          <td class="best">-4293</td>
+          <td class="">-4293.81</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.81%</td>
+        </tr>
+        <tr>
+          <td><span class="method">dd-ls3</span></td>
+          <td class="best">-4293</td>
+          <td class="">-4293.31</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.81%</td>
+        </tr>
+        <tr>
+          <td><span class="method">dd-ls4</span></td>
+          <td class="best">-4293</td>
+          <td class="best">-4293.27</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.81%</td>
+        </tr>
+        <tr>
+          <td><span class="method">fgmd</span></td>
+          <td class="">-4283.45</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">101 / 105</td>
+          <td>98.35%</td>
+        </tr>
+        <tr>
+          <td><span class="method">fm-bca</span></td>
+          <td class="best">-4293</td>
+          <td class="">-4299.53</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.81%</td>
+        </tr>
+        <tr>
+          <td><span class="method">fm</span></td>
+          <td class="">-4292.23</td>
+          <td class="">-4405.84</td>
+          <td class="best">105 / 105</td>
+          <td class="">102 / 105</td>
+          <td>99.62%</td>
+        </tr>
+        <tr>
+          <td><span class="method">fw</span></td>
+          <td class="">-4287.51</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">102 / 105</td>
+          <td>98.89%</td>
+        </tr>
+        <tr>
+          <td><span class="method">ga</span></td>
+          <td class="">946.555</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>14.51%</td>
+        </tr>
+        <tr>
+          <td><span class="method">hbp</span></td>
+          <td class="">-4292.99</td>
+          <td class="">-4304.7</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.75%</td>
+        </tr>
+        <tr>
+          <td><span class="method">ipfps</span></td>
+          <td class="">1050.67</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>14.41%</td>
+        </tr>
+        <tr>
+          <td><span class="method">ipfpu</span></td>
+          <td class="">1061.84</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>14.54%</td>
+        </tr>
+        <tr>
+          <td><span class="method">lsm</span></td>
+          <td class="">1729.32</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>12.19%</td>
+        </tr>
+        <tr>
+          <td><span class="method">mp</span></td>
+          <td class="">-4288.88</td>
+          <td class="">-4299.19</td>
+          <td class="best">105 / 105</td>
+          <td class="">103 / 105</td>
+          <td>99.56%</td>
+        </tr>
+        <tr>
+          <td><span class="method">mp-fw</span></td>
+          <td class="best">-4293</td>
+          <td class="">-4296.08</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.81%</td>
+        </tr>
+        <tr>
+          <td><span class="method">mpm</span></td>
+          <td class="">-2584.64</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">45 / 105</td>
+          <td>77.84%</td>
+        </tr>
+        <tr>
+          <td><span class="method">mp-mcf</span></td>
+          <td class="">-4273.86</td>
+          <td class="">-4295.65</td>
+          <td class="best">105 / 105</td>
+          <td class="">100 / 105</td>
+          <td>98.70%</td>
+        </tr>
+        <tr>
+          <td><span class="method">pm</span></td>
+          <td class="">775.269</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>33.40%</td>
+        </tr>
+        <tr>
+          <td><span class="method">rrwm</span></td>
+          <td class="">743.823</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>15.27%</td>
+        </tr>
+        <tr>
+          <td><span class="method">sm</span></td>
+          <td class="">1085.55</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>13.17%</td>
+        </tr>
+        <tr>
+          <td><span class="method">smac</span></td>
+          <td class="">-1570.79</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">1 / 105</td>
+          <td>61.17%</td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Run time 300s</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>method</th>
+          <th>avg value</th>
+          <th>avg bound</th>
+          <th>feasible</th>
+          <th>optimal</th>
+          <th>accuracy</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="method">dd-ls0</span></td>
+          <td class="best">-4293</td>
+          <td class="">-4293.81</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.81%</td>
+        </tr>
+        <tr>
+          <td><span class="method">dd-ls3</span></td>
+          <td class="best">-4293</td>
+          <td class="">-4293.31</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.81%</td>
+        </tr>
+        <tr>
+          <td><span class="method">dd-ls4</span></td>
+          <td class="best">-4293</td>
+          <td class="best">-4293.27</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.81%</td>
+        </tr>
+        <tr>
+          <td><span class="method">fgmd</span></td>
+          <td class="">-4283.45</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">101 / 105</td>
+          <td>98.35%</td>
+        </tr>
+        <tr>
+          <td><span class="method">fm-bca</span></td>
+          <td class="best">-4293</td>
+          <td class="">-4299.53</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.81%</td>
+        </tr>
+        <tr>
+          <td><span class="method">fm</span></td>
+          <td class="">-4292.23</td>
+          <td class="">-4405.84</td>
+          <td class="best">105 / 105</td>
+          <td class="">102 / 105</td>
+          <td>99.62%</td>
+        </tr>
+        <tr>
+          <td><span class="method">fw</span></td>
+          <td class="">-4287.51</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">102 / 105</td>
+          <td>98.89%</td>
+        </tr>
+        <tr>
+          <td><span class="method">ga</span></td>
+          <td class="">946.555</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>14.51%</td>
+        </tr>
+        <tr>
+          <td><span class="method">hbp</span></td>
+          <td class="">-4292.99</td>
+          <td class="">-4304.7</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.75%</td>
+        </tr>
+        <tr>
+          <td><span class="method">ipfps</span></td>
+          <td class="">1050.67</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>14.41%</td>
+        </tr>
+        <tr>
+          <td><span class="method">ipfpu</span></td>
+          <td class="">1061.84</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>14.54%</td>
+        </tr>
+        <tr>
+          <td><span class="method">lsm</span></td>
+          <td class="">1729.32</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>12.19%</td>
+        </tr>
+        <tr>
+          <td><span class="method">mp</span></td>
+          <td class="">-4288.88</td>
+          <td class="">-4299.19</td>
+          <td class="best">105 / 105</td>
+          <td class="">103 / 105</td>
+          <td>99.56%</td>
+        </tr>
+        <tr>
+          <td><span class="method">mp-fw</span></td>
+          <td class="best">-4293</td>
+          <td class="">-4295.31</td>
+          <td class="best">105 / 105</td>
+          <td class="best">105 / 105</td>
+          <td>99.81%</td>
+        </tr>
+        <tr>
+          <td><span class="method">mpm</span></td>
+          <td class="">-2584.64</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">45 / 105</td>
+          <td>77.84%</td>
+        </tr>
+        <tr>
+          <td><span class="method">mp-mcf</span></td>
+          <td class="">-4277.49</td>
+          <td class="">-4294.99</td>
+          <td class="best">105 / 105</td>
+          <td class="">102 / 105</td>
+          <td>98.89%</td>
+        </tr>
+        <tr>
+          <td><span class="method">pm</span></td>
+          <td class="">775.269</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>33.40%</td>
+        </tr>
+        <tr>
+          <td><span class="method">rrwm</span></td>
+          <td class="">743.823</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>15.27%</td>
+        </tr>
+        <tr>
+          <td><span class="method">sm</span></td>
+          <td class="">1085.55</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">0 / 105</td>
+          <td>13.17%</td>
+        </tr>
+        <tr>
+          <td><span class="method">smac</span></td>
+          <td class="">-1570.79</td>
+          <td class="">-inf</td>
+          <td class="best">105 / 105</td>
+          <td class="">1 / 105</td>
+          <td>61.17%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Per Instance Results</h3>
+    <p>
+      Results for individual instances of the dataset are also available:
+    </p>
+    <ul class="nav-dataset">
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel1/">hotel1</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel2/">hotel2</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel3/">hotel3</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel4/">hotel4</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel5/">hotel5</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel6/">hotel6</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel7/">hotel7</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel8/">hotel8</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel9/">hotel9</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel10/">hotel10</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel11/">hotel11</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel12/">hotel12</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel13/">hotel13</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel14/">hotel14</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel15/">hotel15</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel16/">hotel16</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel17/">hotel17</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel18/">hotel18</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel19/">hotel19</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel20/">hotel20</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel21/">hotel21</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel22/">hotel22</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel23/">hotel23</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel24/">hotel24</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel25/">hotel25</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel26/">hotel26</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel27/">hotel27</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel28/">hotel28</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel29/">hotel29</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel30/">hotel30</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel31/">hotel31</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel32/">hotel32</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel33/">hotel33</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel34/">hotel34</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel35/">hotel35</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel36/">hotel36</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel37/">hotel37</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel38/">hotel38</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel39/">hotel39</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel40/">hotel40</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel41/">hotel41</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel42/">hotel42</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel43/">hotel43</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel44/">hotel44</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel45/">hotel45</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel46/">hotel46</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel47/">hotel47</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel48/">hotel48</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel49/">hotel49</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel50/">hotel50</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel51/">hotel51</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel52/">hotel52</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel53/">hotel53</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel54/">hotel54</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel55/">hotel55</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel56/">hotel56</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel57/">hotel57</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel58/">hotel58</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel59/">hotel59</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel60/">hotel60</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel61/">hotel61</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel62/">hotel62</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel63/">hotel63</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel64/">hotel64</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel65/">hotel65</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel66/">hotel66</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel67/">hotel67</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel68/">hotel68</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel69/">hotel69</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel70/">hotel70</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel71/">hotel71</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel72/">hotel72</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel73/">hotel73</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel74/">hotel74</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel75/">hotel75</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel76/">hotel76</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel77/">hotel77</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel78/">hotel78</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel79/">hotel79</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel80/">hotel80</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel81/">hotel81</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel82/">hotel82</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel83/">hotel83</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel84/">hotel84</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel85/">hotel85</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel86/">hotel86</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel87/">hotel87</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel88/">hotel88</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel89/">hotel89</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel90/">hotel90</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel91/">hotel91</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel92/">hotel92</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel93/">hotel93</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel94/">hotel94</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel95/">hotel95</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel96/">hotel96</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel97/">hotel97</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel98/">hotel98</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel99/">hotel99</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel100/">hotel100</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel101/">hotel101</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel102/">hotel102</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel103/">hotel103</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel104/">hotel104</a></li>
+      <li><a href="https://vislearn.github.io/gmbench/results/table/hotel/hotel105/">hotel105</a></li>
+    </ul>
+  </div>
+</section>
+	</main>
+	<nav>
+		<p>Sitemap:</p>
+		<ul>
+			<li><a href="https://vislearn.github.io/gmbench/">Home</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/news/">News</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/datasets/">Datasets</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/algorithms/">Algorithms</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/results/">Results</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/submit/">Submit</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/publication/">Publication</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/contact/">Contact</a></li>
+			<li><a href="https://github.com/vislearn/gmbench">Our Code</a></li>
+		</li>
+	</nav>
+	<footer>
+	</footer>
+</body>
+</html>

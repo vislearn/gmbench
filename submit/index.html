@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Submit</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="https://vislearn.github.io/gmbench/theme/style.css">
+	<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" type="text/javascript" async></script>
+</head>
+<body>
+	<header>
+		<a href="https://vislearn.github.io/gmbench/">
+			<p id="title">A Comparative Study of Graph Matching Algorithms in Computer Vision</p>
+		</a>
+	</header>
+	<main>
+<article>
+		<h1>Submit</h1>
+		<p>We want to keep this benchmark up to date so that it can serve as a valuable resource also in the future.
+To help us with this please <a class="reference external" href="https://vislearn.github.io/gmbench/contact/">contact us</a> and submit your <a class="reference internal" href="#algorithm-and-code-requirements">algorithm</a> or <a class="reference internal" href="#dataset-format-requirements">dataset</a> in the predefined format described below.</p>
+<section id="algorithm-and-code-requirements">
+<h2>Algorithm and code requirements</h2>
+<ol class="arabic simple">
+<li><p>The algorithm must optimize graph matching problems in the Lawler form.
+Algorithms targeting only the Koopmans-Beckmann form cannot be considered.</p></li>
+<li><p>A mathematical description of the algorithm must be publicly available online.
+Additionally to the spezialized venues, to share the description we recommend to use platforms like <a class="reference external" href="https://ArXiv.org">ArXiv</a> or <a class="reference external" href="http://www.optimization-online.org/">Optimization Online</a>.</p></li>
+<li><p>The solver must be open source with the code preferably placed on a suitable platform like, e.g., <a class="reference external" href="https://github.com/">GitHub</a> or <a class="reference external" href="https://gitlab.com/">GitLab</a>.</p></li>
+<li><p>Building the solver from the source code should be automatized, e.g., with a provided installation script.</p></li>
+<li><p>The solver should run on x86_64 hardware.
+We recommend to test it prior to submission on the current LTS version of Ubuntu.</p></li>
+<li><p>If the solver is threaded, the number of threads should be configurable with a possibility to run single threaded.</p></li>
+<li><p>The solver must provide the required output results in the <a class="reference internal" href="#output-format-requirements">JSON format below</a>.
+Iterative solvers should be able to do this every <span class="math">
+\(k\)</span> iterations, for small enough k.
+This is necessary to build the performance profile of the solver in a single run.</p></li>
+</ol>
+<p>Additional hardware requirements such as non-commonly available SIMD instructions or GPU access may lead to inability to include the respective solver to the benchmark, should we lack access to the respective hardware.</p>
+</section>
+<section id="output-format-requirements">
+<h2>Output Format Requirements</h2>
+<p>We require “<a class="reference external" href="https://jsonlines.org/">JSON lines</a>” output for automatic processing.
+This means that the solver should output one JSON object per output line, e.g., every <span class="math">
+\(k\)</span> iterations.
+The JSON object should include information about the iteration number, the run time, the current value and the current bound.</p>
+<p>The required JSON object structure is as follows:</p>
+<div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;iteration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;time&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.8</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">65.234</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;bound&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">71.364</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;assignment&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="err">...</span><span class="p">]}</span><span class="w"></span>
+<span class="p">{</span><span class="nt">&quot;iteration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;time&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.3</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">68.999</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;bound&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">70.554</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;assignment&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="err">...</span><span class="p">]}</span><span class="w"></span>
+<span class="p">{</span><span class="nt">&quot;iteration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;time&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">3.6</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">69.000</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;bound&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">69.000</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;assignment&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="err">...</span><span class="p">]}</span><span class="w"></span>
+</pre></div>
+<p>The <code>assignment</code> field is a JSON list of integers.
+It contains an entry for each node <span class="math">
+\(u \in \mathcal V\)</span> specifying the index of the label <span class="math">
+\(s \in \mathcal L\)</span> with which it is matched.
+If a label <span class="math">
+\(u \in \mathcal V\)</span> is unassigned, i.e., not matched to any label in <span class="math">
+\(\mathcal L\)</span>, the respective element in the assignment list is specified as <code>null</code>.</p>
+<p>Should the solver be purely primal and do not provide any lower bound, the <code>bound</code> should be omitted or specified as <code>-inf</code>.</p>
+<p>Should the solver not output in the above format, a wrapper script for output transformation must be provided.</p>
+</section>
+<section id="dataset-format-requirements">
+<h2>Dataset Format Requirements</h2>
+<p>We use the same data format as the one used in <a class="citation-reference" href="#toressani13" id="citation-reference-1" role="doc-biblioref">[Toressani13]</a>, <a class="citation-reference" href="#hutschenreiter21" id="citation-reference-2" role="doc-biblioref">[Hutschenreiter21]</a> and <a class="reference external" href="https://vislearn.github.io/gmbench/publication/">our paper</a>.
+The model description should be stored in the file <code>${instancename}.dd</code> and must match the following format:</p>
+<div class="highlight"><pre><span></span>c comment line.
+p &lt;V&gt; &lt;L&gt; &lt;A&gt; &lt;E&gt;       // V: # of nodes on the left (set V),
+                        // L: # of nodes on the right (set L),
+                        // A: # assignments (node-to-node),
+                        // E: # edges (pairs of assigments)
+a &lt;id&gt; &lt;i&gt; &lt;s&gt; &lt;cost&gt;   // specify assignment and its cost c_{is,is}
+e &lt;id1&gt; &lt;id2&gt; &lt;cost&gt;    // specify edge and its cost c_{is,jl}+c_{jl,is}
+
+i0 &lt;i&gt; {x} {y}          // optional: coordinate of a point i\in V in the left image
+i1 &lt;s&gt; {x} {y}          // optional: coordinate of a point s\in L in the right image
+n0 &lt;i&gt; &lt;j&gt;              // optional: specify that points &lt;i&gt; and &lt;j&gt; in
+                        //   the left image are neighbors
+n1 &lt;s&gt; &lt;l&gt;              // optional: specify that points &lt;s&gt; and &lt;l&gt; in
+                        //   the right image are neighbors
+</pre></div>
+<p>The meaning of the sets <span class="math">
+\(\mathcal V\)</span> and <span class="math">
+\(\mathcal L\)</span> coincides with the one in <a class="reference external" href="https://vislearn.github.io/gmbench/publication/">our paper</a>, see also its supplement for a more detailed data format specification.</p>
+<p>If the optimal objective value is known for a dataset instance, it should be stored as a single floating point value in the file <code>${instancename}.opt</code>.</p>
+<p>If ground truth is known, it should be stored in the file <code>${instancename}.gt</code>.
+The file must contain a single JSON sequence where each element is an array of correct label indices or <code>null</code> if no ground truth annotation is known for the specific node.
+For example, if a model containts four nodes and we know that for the first node the label <code>3</code> is correct and for the third node either label <code>1</code> or <code>4</code> is correct, the ground truth file should be provided as follows:</p>
+<div class="highlight"><pre><span></span><span class="p">[[</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">],</span><span class="w"> </span><span class="kc">null</span><span class="p">]</span><span class="w"></span>
+</pre></div>
+<p>In other words, the format allows to store ground truth information that are ambiguios or partial.
+In the more common case where the ground truth labeling is complete and unique, each element in the ground truth of the sequence contains a array containing exactly one element as in the following example:</p>
+<div class="highlight"><pre><span></span><span class="p">[[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]]</span><span class="w"></span>
+</pre></div>
+</section>
+<section id="references">
+<h2>References</h2>
+<div role="list" class="citation-list">
+<div class="citation" id="toressani13" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-1">Toressani13</a><span class="fn-bracket">]</span></span>
+<p>L. Torresani, V. Kolmogorov, C. Rother.
+“<a class="reference external" href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=6197199&amp;casa_token=b1H_SNeIT40AAAAA:-Rnxy8TalafxO227WBezju9bjamtYnuom0sFX9DqNSjxC3mqkhP4wH1xFZcZRSyny0rh1jcacfA&amp;tag=1">A Dual Decomposition Approach to Feature Correspondence</a>”.
+PAMI, 2013.</p>
+</div>
+<div class="citation" id="hutschenreiter21" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-2">Hutschenreiter21</a><span class="fn-bracket">]</span></span>
+<p>L. Hutschenreiter, S. Haller, L. Feineis, C. Rother, D. Kainmüller, B. Savchynskyy.
+“<a class="reference external" href="https://vislearn.github.io/libmpopt/iccv2021/">Fusion Moves for Graph Matching</a>”.
+ICCV, 2021.</p>
+</div>
+</div>
+</section>
+
+	</article>	</main>
+	<nav>
+		<p>Sitemap:</p>
+		<ul>
+			<li><a href="https://vislearn.github.io/gmbench/">Home</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/news/">News</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/datasets/">Datasets</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/algorithms/">Algorithms</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/results/">Results</a></li>
+			<li class="active"><a href="https://vislearn.github.io/gmbench/submit/">Submit</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/publication/">Publication</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/contact/">Contact</a></li>
+			<li><a href="https://github.com/vislearn/gmbench">Our Code</a></li>
+		</li>
+	</nav>
+	<footer>
+	</footer>
+</body>
+</html>

@@ -1,0 +1,404 @@
+/*
+ * Light Theme
+ */
+
+html {
+	--font-family-serif: Georgia, serif;
+	--font-family-sans: Arial, Helvetica, sans-serif;
+	--font-family-mono: Courier New, monospace;
+
+	--color-foreground: #000;
+	--color-background: #fff;
+	--color-background-tinted: #eee;
+
+	--color-link-normal:  hsl(120, 80%, 40%);
+	--color-link-visited: hsl(120, 80%, 20%);
+}
+
+/*
+ * Dark Theme
+ */
+
+@media (prefers-color-scheme: dark) {
+	html {
+		--color-foreground: #eee;
+		--color-background: #000;
+		--color-background-tinted: #222;
+
+		--color-link-normal:  hsl(120, 80%, 50%);
+		--color-link-visited: hsl(120, 80%, 70%);
+	}
+
+	img {
+		filter: invert(100%);
+	}
+}
+
+/*
+ * Fonts
+ */
+
+body {
+	font-family: var(--font-family-serif);
+	font-size: 1rem;
+	line-height: 1.5;
+}
+
+nav, header, h1, h2, h3, h4, h5, h6 {
+	font-family: var(--font-family-sans);
+}
+
+/*
+ * Main Layout
+ */
+
+body {
+	display: grid;
+	justify-content: center;
+	grid-template-columns: auto 38em;
+	grid-template-areas:
+		'empty1 header'
+		'nav    main'
+		'empty2 footer';
+}
+
+body > header  { grid-area: header; }
+body > nav     { grid-area: nav;    }
+body > main    { grid-area: main;   }
+body > footer  { grid-area: footer; }
+
+/*
+ * Header
+ */
+
+body > header {
+	margin-top: 1em;
+	margin-bottom: 1.5em;
+}
+
+body > header #title {
+	font-style: normal;
+	font-weight: bold;
+	line-height: 1.2;
+}
+
+body > header p {
+	margin: 0;
+	padding: 0;
+	font-style: italic;
+}
+
+/*
+ * Navigation Bar
+ */
+
+body > nav {
+	position: sticky;
+	top: 2em;
+	margin-top: 1em;
+	margin-left: 0;
+	margin-right: 1em;
+	margin-bottom: auto;
+	border-right: 1px solid var(--color-foreground);
+	padding-right: 1em;
+	padding-top: 1em;
+	padding-bottom: 1em;
+}
+
+body > nav p {
+	margin: 0;
+	padding: 0;
+	margin-bottom: .5em;
+}
+
+body > nav ul {
+	display: flex;
+	flex-direction: column;
+	gap: .7em;
+	margin: 0;
+	padding: 0;
+}
+
+body > nav ul li {
+	display: block;
+	margin: 0;
+	padding: 0;
+}
+
+body > nav ul.shortcuts {
+	flex-direction: row;
+	margin-top: 2em;
+}
+
+body > nav ul.shortcuts li {
+	flex-basis: 32px;
+}
+
+body > nav ul.shortcuts li a {
+	display: block;
+}
+
+body > nav .shortcuts img {
+	display: block;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}
+
+/*
+ * Footer
+ */
+
+body > footer {
+	margin-top: 2em;
+	margin-bottom: 2em;
+}
+
+body > footer p {
+	margin: 0;
+	padding: 0;
+	font-size: .8rem;
+}
+
+/*
+ * Main Content
+ */
+
+main ul {
+	padding-left: 1.5em;
+}
+
+main ul li {
+	margin-top: .4em;
+	margin-bottom: .4em;
+}
+
+main span.method, main span.dataset {
+	font-family: var(--font-family-mono);
+	font-size: 90%;
+	letter-spacing: -0.04em;
+}
+
+main .citation-list .citation {
+	font-size: 80%;
+	margin-top: .5em;
+	margin-bottom: .5em;
+}
+
+main .citation-list .citation p {
+	display: inline;
+}
+
+main .footnote-reference {
+	font-size: 80%;
+	line-height: 50%;
+	vertical-align: super;
+}
+
+main .footnote {
+  font-size: 80%;
+}
+
+main .footnote:first-of-type {
+	margin-top: 2em;
+}
+
+main .footnote p {
+	display: inline;
+}
+
+main img {
+	max-width: 100%;
+}
+
+main .image-gallery {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: 2em;
+}
+
+main ul.nav-dataset {
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+}
+
+main ul.nav-dataset li {
+	list-style: none;
+	margin: 0;
+	margin-right: 1em;
+	padding: 0;
+}
+
+/* Docutils inserts extra <p> element in lists. */
+main ul.nav-dataset li p {
+	margin: 0;
+	padding: 0;
+}
+
+/* Inline code and code blocks */
+main code, main .highlight pre {
+	font-family: var(--font-family-mono);
+	font-size: 80%;
+	letter-spacing: -.05em;
+	background-color: var(--color-background-tinted);
+}
+
+main code {
+	font-size: 90%;
+	padding: .1em .3em;
+}
+
+main .highlight pre {
+	padding: .5em;
+	margin: -.5em;
+	border-radius: .5em;
+}
+
+/*
+ * Main Content - Tables
+ */
+
+main table {
+	min-width: 100%;
+	border-collapse: collapse;
+	margin-top: 1.5em;
+	margin-bottom: 1.5em;
+	font-family: var(--font-family-sans);
+	font-size: 90%;
+}
+
+main table caption {
+	text-align: left;
+	margin-bottom: .5em;
+}
+
+main table th, main table td {
+	padding-left: .5em;
+	padding-right: .5em;
+	padding-top: .1em;
+	padding-bottom: .1em;
+}
+
+main table td.best {
+	font-weight: bold;
+}
+
+main table thead {
+	border-top: 3px solid var(--color-foreground);
+	border-bottom: 1px solid var(--color-foreground);
+}
+
+main table tbody {
+	border-bottom: 3px solid var(--color-foreground);
+}
+
+main table thead tr:first-child th {
+	padding-top: .3em;
+}
+
+main table thead tr:last-child th {
+	padding-bottom: .2em;
+}
+
+main table tbody tr:first-child td {
+	padding-top: .2em;
+}
+
+main table tr th:nth-child(even), main table tr td:nth-child(even) {
+	background-color: var(--color-background-tinted);
+}
+
+main th.sideways {
+	vertical-align: bottom;
+	text-align: center;
+}
+
+main th.sideways span.sideways {
+	/* Only supported by Firefox right now.
+	writing-mode: sideways-lr;
+	*/
+	writing-mode: vertical-lr;
+	transform: rotate(180deg);
+	/* End workaround */
+	white-space: nowrap;
+	margin: 0;
+	padding: 0;
+}
+
+/*
+ * Heading Sizes
+ */
+
+#title  { font-size: 2rem; }
+main h1 { font-size: 1.8rem; }
+main h2 { font-size: 1.5rem; }
+main h3 { font-size: 1.2rem; }
+
+/*
+ * Colors
+ */
+
+html {
+	color: var(--color-foreground);
+	background-color: var(--color-background);
+}
+
+header a:link, header a:hover, header a:visited, header a:active {
+	color: inherit;
+	text-decoration: inherit;
+}
+
+a:link {
+	color: var(--color-link-normal);
+}
+
+a:visited {
+	color: var(--color-link-visited);
+}
+
+a:hover, a:active {
+	color: var(--color-background);
+	background-color: var(--color-link-normal);
+}
+
+/*
+ * Responsive Design
+ */
+
+.responsive-only {
+	display: none;
+}
+
+@media (max-width: 768px) {
+	body {
+		display: block;
+	}
+
+	nav {
+		position: initial;
+		border: initial;
+		margin: initial;
+		padding: initial;
+		margin-top: 3em;
+		font-family: var(--font-family-serif);
+	}
+
+	.responsive-only {
+		display: initial;
+	}
+}
+
+@media (min-width: 992px) {
+	html {
+		font-size: 120%;
+	}
+}
+
+@media (min-width: 1200px) {
+	html {
+		font-size: 140%;
+	}
+}

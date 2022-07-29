@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Results</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="https://vislearn.github.io/gmbench/theme/style.css">
+	<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" type="text/javascript" async></script>
+</head>
+<body>
+	<header>
+		<a href="https://vislearn.github.io/gmbench/">
+			<p id="title">A Comparative Study of Graph Matching Algorithms in Computer Vision</p>
+		</a>
+	</header>
+	<main>
+<article>
+		<h1>Results</h1>
+		<p>Results have been obtained by taking the minimum run time across five trials on an AMD EPYC 7702 2.0GHz processor.
+Randomized alogrithms were made deterministic by fixing their random seed.
+Performance evaluation is done as proposed by <a class="citation-reference" href="#beiranvand2017" id="citation-reference-1" role="doc-biblioref">[Beiranvand2017]</a>.</p>
+<section id="fixed-time-performance-evaluation">
+<h2>Fixed-Time Performance Evaluation</h2>
+<p>For <em>fixed-time</em> performance evaluation we restrict run time (1, 10, 100s) and evaluate attained objective values, lower bound and, for datasets with ground truth available, accuracy.
+We also report the number of optimally solved instances per dataset.
+For this we consider solutions within a 0.1% range to known optimum as optimal.
+To show the detailed results for each dataset please follow the links below:</p>
+<ul class="nav-dataset simple">
+<li><p><a class="reference external" href="https://vislearn.github.io/gmbench/results/table/caltech-large/">caltech-large</a></p></li>
+<li><p><a class="reference external" href="https://vislearn.github.io/gmbench/results/table/caltech-small/">caltech-small</a></p></li>
+<li><p><a class="reference external" href="https://vislearn.github.io/gmbench/results/table/car/">car</a></p></li>
+<li><p><a class="reference external" href="https://vislearn.github.io/gmbench/results/table/flow/">flow</a></p></li>
+<li><p><a class="reference external" href="https://vislearn.github.io/gmbench/results/table/hotel/">hotel</a></p></li>
+<li><p><a class="reference external" href="https://vislearn.github.io/gmbench/results/table/house-dense/">house-dense</a></p></li>
+<li><p><a class="reference external" href="https://vislearn.github.io/gmbench/results/table/house-sparse/">house-sparse</a></p></li>
+<li><p><a class="reference external" href="https://vislearn.github.io/gmbench/results/table/motor/">motor</a></p></li>
+<li><p><a class="reference external" href="https://vislearn.github.io/gmbench/results/table/opengm/">opengm</a></p></li>
+<li><p><a class="reference external" href="https://vislearn.github.io/gmbench/results/table/pairs/">pairs</a></p></li>
+<li><p><a class="reference external" href="https://vislearn.github.io/gmbench/results/table/worms/">worms</a></p></li>
+</ul>
+</section>
+<section id="fixed-target-performance-evaluation">
+<h2>Fixed-Target Performance Evaluation</h2>
+<p>For <em>fixed-target</em> performance evaluation we measure the time <span class="math">
+\(t_s(p)\)</span> until each solver <span class="math">
+\(s\)</span> solves the problem <span class="math">
+\(p\)</span> within an optimality tolerance of 0.1%.
+For instances with unknown optimum, we consider the best achieved objective value across all methods as optimum as it has been suggested in <a class="citation-reference" href="#beiranvand2017" id="citation-reference-2" role="doc-biblioref">[Beiranvand2017]</a>.
+The performance ratio to the best solver is computed by <span class="math">
+\(r_s(p) = \frac{t_s(p)}{\min \{ t_s(p) : \forall s \}}\)</span>.
+We create a performance profile <a class="citation-reference" href="#dolan2002" id="citation-reference-3" role="doc-biblioref">[Dolan2002]</a> by computing <span class="math">
+\(\rho_s(\tau) = \frac{1}{|P|} \cdot |\{ r_s(p) \leq \tau : \forall p \}|\)</span> for each solver <span class="math">
+\(s\)</span> where <span class="math">
+\(|P|\)</span> denotes the total number of problem instances.
+Intuitively, <span class="math">
+\(\rho_s(\tau)\)</span> is the probability of solver <span class="math">
+\(s\)</span> being at most <span class="math">
+\(\tau\)</span> times slower than the fastest solver.</p>
+<p>Click on a performance plot below to enlarge it.</p>
+<div class="image-gallery docutils container">
+<a class="reference external image-reference" href="https://vislearn.github.io/gmbench/results/perf_plots/all.png"><img alt="Performance Plot for All Datasets" src="https://vislearn.github.io/gmbench/results/perf_plots/all.png" /></a>
+<a class="reference external image-reference" href="https://vislearn.github.io/gmbench/results/perf_plots/caltech-large.png"><img alt="Performance Plot for “caltech-large” Dataset" src="https://vislearn.github.io/gmbench/results/perf_plots/caltech-large.png" /></a>
+<a class="reference external image-reference" href="https://vislearn.github.io/gmbench/results/perf_plots/caltech-small.png"><img alt="Performance Plot for “caltech-small” Dataset" src="https://vislearn.github.io/gmbench/results/perf_plots/caltech-small.png" /></a>
+<a class="reference external image-reference" href="https://vislearn.github.io/gmbench/results/perf_plots/car.png"><img alt="Performance Plot for “car” dataset" src="https://vislearn.github.io/gmbench/results/perf_plots/car.png" /></a>
+<a class="reference external image-reference" href="https://vislearn.github.io/gmbench/results/perf_plots/flow.png"><img alt="Performance Plot for “flow” dataset" src="https://vislearn.github.io/gmbench/results/perf_plots/flow.png" /></a>
+<a class="reference external image-reference" href="https://vislearn.github.io/gmbench/results/perf_plots/hotel.png"><img alt="Performance Plot for “hotel” dataset" src="https://vislearn.github.io/gmbench/results/perf_plots/hotel.png" /></a>
+<a class="reference external image-reference" href="https://vislearn.github.io/gmbench/results/perf_plots/house-dense.png"><img alt="Performance Plot for “house-dense” dataset" src="https://vislearn.github.io/gmbench/results/perf_plots/house-dense.png" /></a>
+<a class="reference external image-reference" href="https://vislearn.github.io/gmbench/results/perf_plots/house-sparse.png"><img alt="Performance Plot for “house-sparse” dataset" src="https://vislearn.github.io/gmbench/results/perf_plots/house-sparse.png" /></a>
+<a class="reference external image-reference" href="https://vislearn.github.io/gmbench/results/perf_plots/motor.png"><img alt="Performance Plot for “motor” dataset" src="https://vislearn.github.io/gmbench/results/perf_plots/motor.png" /></a>
+<a class="reference external image-reference" href="https://vislearn.github.io/gmbench/results/perf_plots/opengm.png"><img alt="Performance Plot for “opengm” dataset" src="https://vislearn.github.io/gmbench/results/perf_plots/opengm.png" /></a>
+<a class="reference external image-reference" href="https://vislearn.github.io/gmbench/results/perf_plots/pairs.png"><img alt="Performance Plot for “pairs” dataset" src="https://vislearn.github.io/gmbench/results/perf_plots/pairs.png" /></a>
+<a class="reference external image-reference" href="https://vislearn.github.io/gmbench/results/perf_plots/worms.png"><img alt="Performance Plot for “worms” dataset" src="https://vislearn.github.io/gmbench/results/perf_plots/worms.png" /></a>
+</div>
+</section>
+<section id="machine-readable-data">
+<h2>Machine Readable Data</h2>
+<p>Additionally to the compiled results on this website we provide the results of the benchmark as <a class="reference external" href="https://vislearn.github.io/gmbench/results/results.json.gz">a machine readible JSON file</a>.</p>
+</section>
+<section id="references">
+<h2>References</h2>
+<div role="list" class="citation-list">
+<div class="citation" id="dolan2002" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-3">Dolan2002</a><span class="fn-bracket">]</span></span>
+<p>E. Dolan and J. Moré. Benchmarking Optimization Software with Performance Profiles. Mathematical Programming, Springer. 2002</p>
+</div>
+<div class="citation" id="beiranvand2017" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>Beiranvand2017<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#citation-reference-1">1</a>,<a role="doc-backlink" href="#citation-reference-2">2</a>)</span>
+<p>V. Beiranvand, W. Hare and Y. Lucet. Best Practices for Comparing Optimization Algorithms. Optimization and Engineering, Springer. 2017</p>
+</div>
+</div>
+</section>
+
+	</article>	</main>
+	<nav>
+		<p>Sitemap:</p>
+		<ul>
+			<li><a href="https://vislearn.github.io/gmbench/">Home</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/news/">News</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/datasets/">Datasets</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/algorithms/">Algorithms</a></li>
+			<li class="active"><a href="https://vislearn.github.io/gmbench/results/">Results</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/submit/">Submit</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/publication/">Publication</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/contact/">Contact</a></li>
+			<li><a href="https://github.com/vislearn/gmbench">Our Code</a></li>
+		</li>
+	</nav>
+	<footer>
+	</footer>
+</body>
+</html>

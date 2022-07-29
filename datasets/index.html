@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Datasets</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="https://vislearn.github.io/gmbench/theme/style.css">
+	<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" type="text/javascript" async></script>
+</head>
+<body>
+	<header>
+		<a href="https://vislearn.github.io/gmbench/">
+			<p id="title">A Comparative Study of Graph Matching Algorithms in Computer Vision</p>
+		</a>
+	</header>
+	<main>
+<article>
+		<h1>Datasets</h1>
+		<p>We collected 11 datasets for evaluation of the graph matching algorithms.
+They come from applications in computer vision and bio-imaging.
+Together these datasets contain 451 problem instances.
+The following table gives an overview of their characteristics.
+We modified costs in several datasets to make them amenable to some algorithms, see the supplementary material in <a class="reference external" href="https://vislearn.github.io/gmbench/publication/">our paper</a>.
+This modification results in a constant shift of the objective value for each feasible assignment, and, therefore, does not influence the quality of the solution.</p>
+<table>
+  <caption>
+      <strong>Dataset properties.</strong>
+      A “+” indicates that all problem instances of the dataset have the respective property.
+      Meaning of properties:
+      <em>#inst.</em>: number of problem instances;
+      <em>#opt.</em>: number of known optima;
+      <em>injective/bijective</em>: injective/bijective assignment is assumed;
+      <em>non-pos.</em>: all costs are non-positive;
+      <em>0-unary</em>: datasets with zero unary costs;
+      <em>|V|</em> number of elements in V;
+      <em>|L|/|V|</em>: ratio of the number of elements in L to the number of elements in V;
+      <em>density (%)</em>: percentage of non-zero elements in the cost matrix C;
+      <em>diag. dens. (%)</em>: percentage of non-infinite elements on the diagonal of C.
+  </caption>
+  <thead>
+    <tr>
+      <th class="sideways"><span class="sideways">dataset</span></th>
+      <th class="sideways"><span class="sideways">#inst.</span></th>
+      <th class="sideways"><span class="sideways">#opt.</span></th>
+      <th class="sideways"><span class="sideways">bijective</span></th>
+      <th class="sideways"><span class="sideways">injective</span></th>
+      <th class="sideways"><span class="sideways">non-pos.</span></th>
+      <th class="sideways"><span class="sideways">0-unary</span></th>
+      <th class="sideways"><span class="sideways">|V|</span></th>
+      <th class="sideways"><span class="sideways">|L|/|V|</span></th>
+      <th class="sideways"><span class="sideways">density (%)</span></th>
+      <th class="sideways"><span class="sideways">diagonal dens. (%)</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><span class="dataset">caltech-large</span></td><td>9</td><td>1</td><td></td><td>+</td><td>+</td><td>+</td><td>36-219</td><td>0.4-2.3</td><td>0.55</td><td>18.1</td></tr>
+    <tr><td><span class="dataset">caltech-small</span></td><td>21</td><td>12</td><td></td><td>+</td><td>+</td><td>+</td><td>9-117</td><td>0.4-3</td><td>0.99</td><td>26.8</td></tr>
+    <tr><td><span class="dataset">car</span></td><td>30</td><td>30</td><td>+</td><td></td><td>+</td><td></td><td>19-49</td><td>1</td><td>2.9</td><td>100</td></tr>
+    <tr><td><span class="dataset">flow</span></td><td>6</td><td>6</td><td></td><td></td><td></td><td></td><td>48-126</td><td>≈1</td><td>0.39</td><td>15.8</td></tr>
+    <tr><td><span class="dataset">hotel</span></td><td>105</td><td>105</td><td>+</td><td></td><td></td><td></td><td>30</td><td>≈1</td><td>12.8</td><td>100</td></tr>
+    <tr><td><span class="dataset">house-dense</span></td><td>105</td><td>105</td><td>+</td><td></td><td></td><td></td><td>30</td><td>1</td><td>12.6</td><td>100</td></tr>
+    <tr><td><span class="dataset">house-sparse</span></td><td>105</td><td>105</td><td>+</td><td></td><td>+</td><td>+</td><td>30</td><td>1</td><td>1.5</td><td>100</td></tr>
+    <tr><td><span class="dataset">motor</span></td><td>20</td><td>20</td><td>+</td><td></td><td>+</td><td></td><td>15-52</td><td>1</td><td>3.8</td><td>100</td></tr>
+    <tr><td><span class="dataset">opengm</span></td><td>4</td><td>4</td><td>+</td><td></td><td></td><td></td><td>19-20</td><td>1</td><td>74.8</td><td>100</td></tr>
+    <tr><td><span class="dataset">pairs</span></td><td>16</td><td>0</td><td></td><td></td><td></td><td></td><td>511-565</td><td>≈1</td><td>0.0019</td><td>3.7</td></tr>
+    <tr><td><span class="dataset">worms</span></td><td>30</td><td>28</td><td></td><td></td><td></td><td></td><td>558</td><td>≈2.4</td><td>0.00038</td><td>1.6</td></tr>
+  </tbody>
+</table><p>Below we give a brief description of each dataset.
+Along with the standard computer vision datasets with small-sized problems, <span class="dataset">hotel</span>, <span class="dataset">house-dense</span>, <span class="dataset">house-sparse</span>, <span class="dataset">car</span>, <span class="dataset">motor</span> and <span class="dataset">opengm</span> with <span class="math">
+\(|\mathcal V|\)</span> up to 52, our collection contains the middle-sized problems <span class="dataset">flow</span>, with <span class="math">
+\(|\mathcal V|\)</span> up to 126, and the large-scale <span class="dataset">worms</span> and <span class="dataset">pairs</span> problems with <span class="math">
+\(|\mathcal V|\)</span> up to 565.</p>
+<section id="wide-baseline-matching">
+<h2>Wide baseline matching</h2>
+<p>These datasets <span class="dataset">hotel</span>, <span class="dataset">house-dense</span>, <span class="dataset">house-sparse</span> are based on a series of images of the same synthetic object with manually selected landmarks from different viewing angles based on the work by <a class="citation-reference" href="#caetano09" id="citation-reference-1" role="doc-biblioref">[Caetano09]</a>.
+For <span class="dataset">hotel</span> and <span class="dataset">house-dense</span> we use the same models as in <a class="citation-reference" href="#swoboda17" id="citation-reference-2" role="doc-biblioref">[Swoboda17]</a> published in <a class="citation-reference" href="#torresani14" id="citation-reference-3" role="doc-biblioref">[Torresani14]</a>.
+<span class="dataset">house-sparse</span> consists of the same image pairs as Salg{house-dense}, but the cost structure is derived following the approach of <a class="citation-reference" href="#zhang16" id="citation-reference-4" role="doc-biblioref">[Zhang16]</a> that results in significantly sparser problem instances.
+Graphs with the landmarks as nodes are obtained by Delaunay triangulation.
+The costs are set to <span class="math">
+\(c_{is,jl}=-\exp(-(d_{ij}-d_{sl})^2/2500)A^1_{ij}A^2_{sl}\)</span> where <span class="math">
+\(d_{ij},d_{sl}\)</span> are Euclidean distances between two landmarks and <span class="math">
+\(A^1\in\{0,1\}^{\mathcal V \times \mathcal V}\)</span>, <span class="math">
+\(A^2\in\{0,1\}^{\mathcal L \times \mathcal L}\)</span> are adjacency matrices of the corresponding graphs.
+The unary costs are zero.</p>
+</section>
+<section id="keypoint-matching">
+<h2>Keypoint matching</h2>
+<p>These datasets <span class="dataset">car</span> and <span class="dataset">motor</span> contains <em>car</em> and <em>motor</em>bike images from the PASCAL VOC 2007 Challenge <a class="citation-reference" href="#everingham07" id="citation-reference-5" role="doc-biblioref">[Everingham07]</a> with the features and costs from <a class="citation-reference" href="#leordeanu12" id="citation-reference-6" role="doc-biblioref">[Leordeanu12]</a>.
+We preprocessed the models by removing edges with zero cost, thereby reducing graph density substantially.</p>
+</section>
+<section id="large-displacement-flow">
+<h2>Large displacement flow</h2>
+<p>The <span class="dataset">flow</span> dataset was introduced by <a class="citation-reference" href="#alhaija15" id="citation-reference-7" role="doc-biblioref">[Alhaija15]</a> for key point matching on scenes with large motion.
+We use the same keypoints and costs as in <a class="citation-reference" href="#swoboda17" id="citation-reference-8" role="doc-biblioref">[Swoboda17]</a>.
+You may also like to check the <a class="reference external" href="https://hci.iwr.uni-heidelberg.de/vislearn/research/image-matching/graphflow/">web-page of the project</a>.</p>
+</section>
+<section id="opengm-matching">
+<h2>OpenGM matching</h2>
+<p>The <span class="dataset">opengm</span> dataset is a set of non-rigid point matching problems by <a class="citation-reference" href="#komodakis08" id="citation-reference-9" role="doc-biblioref">[Komodakis08]</a>, now part of the <em>OpenGM</em> Benchmark <a class="citation-reference" href="#kappes15" id="citation-reference-10" role="doc-biblioref">[Kappes15]</a>.</p>
+</section>
+<section id="caltech">
+<h2>Caltech</h2>
+<p>The <span class="dataset">caltech</span> dataset was proposed in <a class="citation-reference" href="#cho10" id="citation-reference-11" role="doc-biblioref">[Cho10]</a>.
+The data available at their project page contains the <em>mutual projection error</em> matrix <span class="math">
+\(D=(d_{is,jl})\)</span>, lists of possible assignments, and partial ground truth.
+We reconstructed the dataset from this data.
+Unary costs are set to zero.
+Pairwise costs for pairs of possible assignments are set to <span class="math">
+\(c_{is,jl} = -\max (50 - d_{is,jl},0)\)</span>.
+We divided the dataset into <span class="dataset">caltech-small</span> and <span class="dataset">caltech-large</span>, where all instances with more than 40000 non-zero pairwise costs are considered as large.</p>
+</section>
+<section id="worm-atlas-matching">
+<h2>Worm atlas matching</h2>
+<p>The <span class="dataset">worms</span> dataset has the goal to annotate nuclei of <em>C. elegans</em>, a famous model organism used in developmental biology, by assigning nuclei names from a known atlas of the organism.
+A detailed description can be found in <a class="citation-reference" href="#kainmuller14" id="citation-reference-12" role="doc-biblioref">[Kainmüller14]</a>.
+We use the models from <a class="citation-reference" href="#kainmuller17" id="citation-reference-13" role="doc-biblioref">[Kainmüller17]</a>.</p>
+</section>
+<section id="worm-to-worm-matching">
+<h2>Worm-to-worm matching</h2>
+<p>The <span class="dataset">pairs</span> dataset directly matches the cell nuclei of individual <em>C. elegans</em> worms to each other.
+The resulting models are much coarser than those of the <span class="dataset">worms</span> dataset.
+We consider the same <span class="math">
+\(16\)</span> problem instances as <a class="citation-reference" href="#hutschenreiter21" id="citation-reference-14" role="doc-biblioref">[Hutschenreiter21]</a> using the models their project page.</p>
+</section>
+<section id="download-archive-of-all-datasets">
+<h2>Download Archive of All Datasets</h2>
+<p>Download: <a class="reference external" href="https://hci.iwr.uni-heidelberg.de/vislearn/HTML/people/stefan_haller/datasets/graph_matching_benchmark.7z">graph_matching_benchmark.7z</a>
+(349MiB, SHA256: <code>c86ffbdb285c3abe00a20d2622d36c4ed446944b617b3e3acada9f5d9b1f5466</code>)</p>
+<p>Please do not link directly to the files as the URL is subject to be changed.
+We keep this page updated and link to the current location of the data files.</p>
+</section>
+<section id="references">
+<h2>References</h2>
+<div role="list" class="citation-list">
+<div class="citation" id="torresani14" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-3">Torresani14</a><span class="fn-bracket">]</span></span>
+<p>L. Torresani, V. Kolmogorov, C. Rother.
+“Graph Matching Hotel/House Models”.
+<a class="reference external" href="https://datasets.d2.mpi-inf.mpg.de/discrete_cv_problems/graph_matching_hotel_house.zip">[URL]</a></p>
+</div>
+<div class="citation" id="everingham07" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-5">Everingham07</a><span class="fn-bracket">]</span></span>
+<p>M. Everingham, L. Van Gool, C. Williams, J. Winn, A. Zisserman.
+“The PASCAL Visual Object Classes Challenge 2007 Results”.
+2007.
+<a class="reference external" href="http://www.pascal-network.org/challenges/VOC/voc2007/workshop/index.html">[URL]</a></p>
+</div>
+<div class="citation" id="komodakis08" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-9">Komodakis08</a><span class="fn-bracket">]</span></span>
+<p>N. Komodakis, N. Paragios.
+“Beyond Loose LP-Relaxations: Optimizing MRFs by Repairing Cycles”.
+ECCV, 2008.</p>
+</div>
+<div class="citation" id="caetano09" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-1">Caetano09</a><span class="fn-bracket">]</span></span>
+<p>T. Caetano, J. McAuley, L. Cheng, Q. Le, A. Smola.
+“Learning Graph Matching”.
+PAMI, 2009.</p>
+</div>
+<div class="citation" id="cho10" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-11">Cho10</a><span class="fn-bracket">]</span></span>
+<p>M. Cho, L. Jungmin, M. Kyoung.
+“Reweighted Random Walks for Graph Matching”.
+ECCV, 2010.
+<a class="reference external" href="https://cv.snu.ac.kr/research/~RRWM/">[Website]</a></p>
+</div>
+<div class="citation" id="leordeanu12" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-6">Leordeanu12</a><span class="fn-bracket">]</span></span>
+<p>M. Leordeanu, R. Sukthankar, M. Hebert.
+“Unsupervised Learning for Graph Matching.”
+IJCV, 2012.</p>
+</div>
+<div class="citation" id="kainmuller14" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-12">Kainmüller14</a><span class="fn-bracket">]</span></span>
+<p>D. Kainmüller, F. Jug, C. Rother, G. Myers.
+“Active Graph Matching for Automatic Joint Segmentation and Annotation of C. elegans”.
+MICCAI, 2014.</p>
+</div>
+<div class="citation" id="alhaija15" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-7">Alhaija15</a><span class="fn-bracket">]</span></span>
+<p>H. Abu Alhaija, A. Sellent, D. Kondermann, C. Rother.
+“GraphFlow — 6D Large Displacement Scene Flow via Graph Matching”.
+GCPR, 2015.</p>
+</div>
+<div class="citation" id="kappes15" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-10">Kappes15</a><span class="fn-bracket">]</span></span>
+<p>J. Kappes, B. Andres and F. Hamprecht, C. Schnörr, S. Nowozin, D. Batra, S. Kim, B. Kausler, T. Kröger, J. Lellmann, N. Komodakis, B. Savchynskyy, C. Rother.
+“A Comparative Study of Modern Inference Techniques for Structured Discrete Energy Minimization Problems”.
+IJCV, 2015.
+<a class="reference external" href="http://hciweb2.iwr.uni-heidelberg.de/opengm/index.php?l0=benchmark">[Website]</a></p>
+</div>
+<div class="citation" id="zhang16" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-4">Zhang16</a><span class="fn-bracket">]</span></span>
+<p>Z. Zhang, Q. Shi, J. McAuley, W. Wei, Y. Zhang, A. van den Hengel.
+“Pairwise Matching Through Max-Weight Bipartite Belief Propagation”.
+CVPR, 2016.</p>
+</div>
+<div class="citation" id="kainmuller17" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-13">Kainmüller17</a><span class="fn-bracket">]</span></span>
+<p>D. Kainmüller, F. Jug, C. Rother, G. Myers.
+“Graph Matching Problems for Annotating C. elegans”.
+IST Austria, 2017.
+<a class="reference external" href="https://doi.org/10.15479/AT:ISTA:57">[URL]</a></p>
+</div>
+<div class="citation" id="swoboda17" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>Swoboda17<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#citation-reference-2">1</a>,<a role="doc-backlink" href="#citation-reference-8">2</a>)</span>
+<p>P. Swoboda, C. Rother, H. Alhaija, D. Kainmuller, B. Savchynskyy.
+“A Study of Lagrangean Decompositions and Dual Ascent Solvers for Graph Matching”.
+CVPR, 2017.</p>
+</div>
+<div class="citation" id="hutschenreiter21" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#citation-reference-14">Hutschenreiter21</a><span class="fn-bracket">]</span></span>
+<p>L. Hutschenreiter, S. Haller, L. Feineis, C. Rother, D. Kainmüller, B. Savchynskyy.
+“Fusion Moves for Graph Matching”.
+ICCV, 2021.
+<a class="reference external" href="https://vislearn.github.io/libmpopt/iccv2021/">[Website]</a></p>
+</div>
+</div>
+</section>
+
+	</article>	</main>
+	<nav>
+		<p>Sitemap:</p>
+		<ul>
+			<li><a href="https://vislearn.github.io/gmbench/">Home</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/news/">News</a></li>
+			<li class="active"><a href="https://vislearn.github.io/gmbench/datasets/">Datasets</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/algorithms/">Algorithms</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/results/">Results</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/submit/">Submit</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/publication/">Publication</a></li>
+			<li><a href="https://vislearn.github.io/gmbench/contact/">Contact</a></li>
+			<li><a href="https://github.com/vislearn/gmbench">Our Code</a></li>
+		</li>
+	</nav>
+	<footer>
+	</footer>
+</body>
+</html>
